@@ -194,6 +194,7 @@ final class ManiphestTaskDetailController extends ManiphestController {
           ManiphestTaskStatus::STATUS_CLOSED_WONTFIX,
           ManiphestTaskStatus::STATUS_CLOSED_INVALID,
           ManiphestTaskStatus::STATUS_CLOSED_SPITE,
+          ManiphestTaskStatus::STATUS_CLOSED_ARCHIVED,
         ));
     } else {
       $resolution_types = array(

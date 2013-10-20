@@ -11,6 +11,7 @@ final class ManiphestTaskStatus extends ManiphestConstants {
   const STATUS_CLOSED_INVALID     = 3;
   const STATUS_CLOSED_DUPLICATE   = 4;
   const STATUS_CLOSED_SPITE       = 5;
+  const STATUS_CLOSED_ARCHIVED    = 123450;
 
   const COLOR_STATUS_OPEN = 'status';
   const COLOR_STATUS_CLOSED = 'status-dark';
@@ -22,6 +23,7 @@ final class ManiphestTaskStatus extends ManiphestConstants {
     $invalid = pht('Invalid');
     $duplicate = pht('Duplicate');
     $spite = pht('Spite');
+    $archived = pht('Archived');
 
     return array(
       self::STATUS_OPEN                 => $open,
@@ -30,6 +32,7 @@ final class ManiphestTaskStatus extends ManiphestConstants {
       self::STATUS_CLOSED_INVALID       => $invalid,
       self::STATUS_CLOSED_DUPLICATE     => $duplicate,
       self::STATUS_CLOSED_SPITE         => $spite,
+      self::STATUS_CLOSED_ARCHIVED      => $archived,
     );
   }
 
@@ -40,6 +43,7 @@ final class ManiphestTaskStatus extends ManiphestConstants {
     $invalid = pht('Closed, Invalid');
     $duplicate = pht('Closed, Duplicate');
     $spite = pht('Closed, Spite');
+    $archived = pht('Closed, Archived');
 
     $map = array(
       self::STATUS_OPEN                 => $open,
@@ -48,6 +52,7 @@ final class ManiphestTaskStatus extends ManiphestConstants {
       self::STATUS_CLOSED_INVALID       => $invalid,
       self::STATUS_CLOSED_DUPLICATE     => $duplicate,
       self::STATUS_CLOSED_SPITE         => $spite,
+      self::STATUS_CLOSED_ARCHIVED      => $archived,
     );
     return idx($map, $status, '???');
   }
@@ -62,6 +67,7 @@ final class ManiphestTaskStatus extends ManiphestConstants {
       self::STATUS_CLOSED_INVALID   => self::COLOR_STATUS_CLOSED,
       self::STATUS_CLOSED_DUPLICATE => self::COLOR_STATUS_CLOSED,
       self::STATUS_CLOSED_SPITE     => self::COLOR_STATUS_CLOSED,
+      self::STATUS_CLOSED_ARCHIVED  => self::COLOR_STATUS_CLOSED,
     );
     return idx($map, $status, $default);
   }
@@ -75,6 +81,7 @@ final class ManiphestTaskStatus extends ManiphestConstants {
       self::STATUS_CLOSED_INVALID   => 'oh-closed-dark',
       self::STATUS_CLOSED_DUPLICATE => 'oh-closed-dark',
       self::STATUS_CLOSED_SPITE     => 'oh-closed-dark',
+      self::STATUS_CLOSED_ARCHIVED  => 'oh-closed-dark',
     );
     return idx($map, $status, $default);
   }
