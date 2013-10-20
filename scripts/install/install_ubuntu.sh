@@ -9,7 +9,7 @@ GIT='git'
 
 LTS="Ubuntu 10.04"
 ISSUE=`cat /etc/issue`
-if [[ $ISSUE != Ubuntu* ]]
+if [[ ($ISSUE != Ubuntu*) && ($ISSUE != Debian*) ]];
 then
   echo "This script is intended for use on Ubuntu, but this system appears";
   echo "to be something else. Your results may vary.";
