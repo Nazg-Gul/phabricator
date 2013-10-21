@@ -27,13 +27,13 @@ abstract class PhabricatorProjectController extends PhabricatorController {
     $can_create = $this->hasApplicationCapability(
       ProjectCapabilityCreateProjects::CAPABILITY);
 
-    $crumbs->addAction(
-      id(new PHUIListItemView())
-        ->setName(pht('Create Project'))
-        ->setHref($this->getApplicationURI('create/'))
-        ->setIcon('create')
-        ->setWorkflow(!$can_create)
-        ->setDisabled(!$can_create));
+    if ($can_create) {
+      $crumbs->addAction(
+        id(new PHUIListItemView())
+          ->setName(pht('Create Project'))
+          ->setHref($this->getApplicationURI('create/'))
+          ->setIcon('create'));
+    }
 
     return $crumbs;
   }
