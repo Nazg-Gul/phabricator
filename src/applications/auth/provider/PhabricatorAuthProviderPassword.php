@@ -77,13 +77,10 @@ final class PhabricatorAuthProviderPassword
         pht('Register New Account'));
     }
 
-    $dialog->addFooter(phutil_tag('br'));
-    $dialog->addFooter(pht('Welcome to the new Blender developer website! Accounts from projects.blender.org have been preserved, with one exception: if you had multiple accounts using the same e-mail address, they will now be merged into one account.'));
-    $dialog->addFooter(phutil_tag('br'));
-    $dialog->addFooter(phutil_tag('br'));
-	$dialog->addFooter(pht('TODO: add a way to show the right account name if the wrong one is entered.'));
-    $dialog->addFooter(phutil_tag('br'));
-    $dialog->addFooter(phutil_tag('br'));
+    $webroot = dirname(phutil_get_library_root('phabricator')).'/webroot/';
+    $dialog->addFooter(
+      phutil_safe_html(
+        FileSystem::readFile($webroot .'rsrc/custom/static/login.html')));
 
     $dialog->addFooter(
       phutil_tag(
