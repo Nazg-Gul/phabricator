@@ -688,7 +688,11 @@ return array(
 // -- Welcome Screen -------------------------------------------------------- //
 
   // The custom HTML content for the Phabricator welcome screen.
+  // Ignored if welcome.file is set.
   'welcome.html' => null,
+
+  // The custom HTML file for the Phabricator welcome screen.
+  'welcome.file' => null,
 
 // -- Files ----------------------------------------------------------------- //
 

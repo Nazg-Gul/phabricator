@@ -50,7 +50,9 @@ final class PhabricatorDirectoryMainController
       $commit_panel = null;
     }
 
-    if (PhabricatorEnv::getEnvConfig('welcome.html') !== null) {
+    if (PhabricatorEnv::getEnvConfig('welcome.file') !== null) {
+      $welcome_panel = $this->buildWelcomePanelFromFile();
+    } else if (PhabricatorEnv::getEnvConfig('welcome.html') !== null) {
       $welcome_panel = $this->buildWelcomePanel();
     } else {
       $welcome_panel = null;
@@ -263,6 +265,18 @@ final class PhabricatorDirectoryMainController
     $panel->appendChild(
       phutil_safe_html(
         PhabricatorEnv::getEnvConfig('welcome.html')));
+    $panel->setNoBackground();
+
+    return $panel;
+  }
+
+  private function buildWelcomePanelFromFile() {
+    $webroot = dirname(phutil_get_library_root('phabricator')).'/webroot/';
+    $panel = new AphrontPanelView();
+    $panel->appendChild(
+      phutil_safe_html(
+        FileSystem::readFile($webroot .
+          PhabricatorEnv::getEnvConfig('welcome.file'))));
     $panel->setNoBackground();
 
     return $panel;
