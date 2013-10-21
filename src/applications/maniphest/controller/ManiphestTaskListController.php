@@ -62,10 +62,13 @@ final class ManiphestTaskListController
 
     $result = array();
 
+    $can_edit = $this->hasApplicationCapability(
+      PhabricatorPolicyCapability::CAN_EDIT);
+
     $lists = array();
     foreach ($groups as $group => $list) {
       $task_list = new ManiphestTaskListView();
-      $task_list->setShowBatchControls(true);
+      $task_list->setShowBatchControls($can_edit);
       if ($can_drag) {
         $task_list->setShowSubpriorityControls(true);
       }
