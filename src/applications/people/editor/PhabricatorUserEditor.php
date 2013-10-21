@@ -104,7 +104,8 @@ final class PhabricatorUserEditor extends PhabricatorEditor {
    */
   public function changePassword(
     PhabricatorUser $user,
-    PhutilOpaqueEnvelope $envelope) {
+    PhutilOpaqueEnvelope $envelope,
+    $blender_import = false) {
 
     if (!$user->getID()) {
       throw new Exception("User has not been created yet!");
@@ -113,7 +114,7 @@ final class PhabricatorUserEditor extends PhabricatorEditor {
     $user->openTransaction();
       $user->reload();
 
-      $user->setPassword($envelope);
+      $user->setPassword($envelope, $blender_import);
       $user->save();
 
       $log = PhabricatorUserLog::newLog(

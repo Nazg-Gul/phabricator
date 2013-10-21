@@ -68,7 +68,7 @@ final class PhabricatorUser
       PhabricatorPeoplePHIDTypeUser::TYPECONST);
   }
 
-  public function setPassword(PhutilOpaqueEnvelope $envelope) {
+  public function setPassword(PhutilOpaqueEnvelope $envelope, $blender_import = false) {
     if (!$this->getPHID()) {
       throw new Exception(
         "You can not set a password for an unsaved user because their PHID ".
@@ -79,7 +79,7 @@ final class PhabricatorUser
       $this->setPasswordHash('');
     } else {
       $this->setPasswordSalt(md5(mt_rand()));
-      $hash = $this->hashPassword($envelope);
+      $hash = $this->hashPassword($envelope, $blender_import);
       $this->setPasswordHash($hash);
     }
     return $this;
@@ -140,11 +140,21 @@ final class PhabricatorUser
     return ($password_hash === $this->getPasswordHash());
   }
 
-  private function hashPassword(PhutilOpaqueEnvelope $envelope) {
-    $hash = $this->getUsername().
-            $envelope->openEnvelope().
-            $this->getPHID().
-            $this->getPasswordSalt();
+  private function hashPassword(PhutilOpaqueEnvelope $envelope, $blender_import = false) {
+	/* phabricator hashing is modified to add an extra md5(), so that we can
+	 * import md5 hashed passwords from gforge and keep them working */
+	if ($blender_import) {
+		$hash = $this->getUsername().
+				$envelope->openEnvelope().
+				$this->getPHID().
+				$this->getPasswordSalt();
+	}
+	else {
+		$hash = $this->getUsername().
+				md5($envelope->openEnvelope()).
+				$this->getPHID().
+				$this->getPasswordSalt();
+	}
     for ($ii = 0; $ii < 1000; $ii++) {
       $hash = md5($hash);
     }
