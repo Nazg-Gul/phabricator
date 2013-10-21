@@ -193,6 +193,9 @@ abstract class LiskDAO {
 
   private $inSet = null;
 
+  private $__overrideDate = null;
+  private $__overrideID = null;
+
   protected $id;
   protected $phid;
   protected $dateCreated;
