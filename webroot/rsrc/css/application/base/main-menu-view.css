@@ -41,7 +41,7 @@
 
 .phabricator-main-menu-logo {
   display: inline-block;
-  width: 149px;
+  width: 124px;
   height: 44px;
   float: left;
   margin-right: 6px;
@@ -55,7 +55,7 @@
 
 .phabricator-main-menu-logo-image {
   position: absolute;
-  width: 149px;
+  width: 124px;
   height: 26px;
   top: 9px;
 }
