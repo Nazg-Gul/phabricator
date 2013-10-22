@@ -1,7 +1,8 @@
 <?php
 
-function create_custom_field_transaction($task, $user, $value, $template)
+function create_custom_field_transaction($task, $user, $name, $value, $template, $date)
 {
+	// TODO: hide transactions for irrelevant fields
     $field_list = PhabricatorCustomField::getObjectFields($task, PhabricatorCustomField::ROLE_EDIT);
 
     foreach ($field_list->getFields() as $field) {
@@ -14,48 +15,53 @@ function create_custom_field_transaction($task, $user, $value, $template)
 
 	$old_values = array();
 	foreach ($aux_fields as $aux_arr_key => $aux_field) {
-        $aux_old_value = $aux_field->getOldValueForApplicationTransactions();
-		$aux_field->setValueFromStorage($value);
-        $aux_new_value = $aux_field->getNewValueForApplicationTransactions();
+		if($aux_arr_key == "std:maniphest:" . $name) {
+			$aux_old_value = $aux_field->getOldValueForApplicationTransactions();
+			$aux_field->setValueFromStorage($value);
+			$aux_new_value = $aux_field->getNewValueForApplicationTransactions();
 
-        $placeholder_editor = new PhabricatorUserProfileEditor();
+			$placeholder_editor = new PhabricatorUserProfileEditor();
 
-        $field_errors = $aux_field->validateApplicationTransactions(
-          $placeholder_editor,
-          PhabricatorTransactions::TYPE_CUSTOMFIELD,
-          array(
-            id(new ManiphestTransaction())
-              ->setOldValue($aux_old_value)
-              ->setNewValue($aux_new_value),
-          ));
+			$field_errors = $aux_field->validateApplicationTransactions(
+			  $placeholder_editor,
+			  PhabricatorTransactions::TYPE_CUSTOMFIELD,
+			  array(
+				id(new ManiphestTransaction())
+				  ->setOldValue($aux_old_value)
+				  ->setNewValue($aux_new_value),
+			  ));
 
-        foreach ($field_errors as $error) {
-          $errors[] = $error->getMessage();
-        }
+			foreach ($field_errors as $error) {
+			  $errors[] = $error->getMessage();
+			}
 
-        $old_values[$aux_field->getFieldKey()] = $aux_old_value;
+			$old_values[$aux_field->getFieldKey()] = $aux_old_value;
+		}
 	}
 
 	$transactions = array();
 
-	foreach ($aux_fields as $aux_field) {
-		$transaction = clone $template;
-		$transaction->setTransactionType(PhabricatorTransactions::TYPE_CUSTOMFIELD);
-		$aux_key = $aux_field->getFieldKey();
-		$transaction->setMetadataValue('customfield:key', $aux_key);
-		$old = idx($old_values, $aux_key);
-		$new = $aux_field->getNewValueForApplicationTransactions();
+	foreach ($aux_fields as $aux_arr_key => $aux_field) {
+		if($aux_arr_key == "std:maniphest:" . $name) {
+			$transaction = clone $template;
+			$transaction->setTransactionType(PhabricatorTransactions::TYPE_CUSTOMFIELD);
+			$aux_key = $aux_field->getFieldKey();
+			$transaction->setMetadataValue('customfield:key', $aux_key);
+			$old = idx($old_values, $aux_key);
+			$new = $aux_field->getNewValueForApplicationTransactions();
 
-		$transaction->setOldValue($old);
-		$transaction->setNewValue($new);
+			$transaction->setOldValue($old);
+			$transaction->setNewValue($new);
+			$transaction->setOverrideDate($date);
 
-		$transactions[] = $transaction;
+			$transactions[] = $transaction;
+		}
 	}
 
 	return $transactions;
 }
 
-function create_task($user, $id, $title, $projects, $description, $assign_user, $date, $ccs, $priority, $field_value)
+function create_task($user, $id, $title, $projects, $description, $assign_user, $date, $ccs, $priority, $type_field, $extension_field)
 {
 	/* create task */
 	$task = ManiphestTask::initializeNewTask($user);
@@ -94,7 +100,9 @@ function create_task($user, $id, $title, $projects, $description, $assign_user, 
 	}
 
 	/* type */
-	$transactions = array_merge($transactions, create_custom_field_transaction($task, $user, $field_value, $template));
+	$transactions = array_merge($transactions, create_custom_field_transaction($task, $user, "blender:task-type", $type_field, $template, $date));
+	if($extension_field != "None")
+		$transactions = array_merge($transactions, create_custom_field_transaction($task, $user, "blender:extension-type", $extension_field, $template, $date));
 
 	$editor = id(new ManiphestTransactionEditorPro())
 	->setActor($user)

@@ -39,10 +39,11 @@ create_project("OpenGL / Gfx", "None", true, array(), "OpenGL and graphics drive
 create_project("Physics", "None", true, array(), "Physics simulation systems including rigid bodies, cloth, softbodies, smoke fluids and particles."); // Physics
 create_project("Python", "None", true, array(), "Python API for scripting."); // Python
 create_project("Rendering", "None", true, array(), "Blender internal renderer and general rendering pipeline."); // Rendering
-create_project("Cycles", "None", true, array(), "Ray tracing based production renderer built into Blender."); // Rendering: Cycles
+create_project("Cycles", "None", true, array(), "Raytracing based production renderer built into Blender."); // Rendering: Cycles
 //create_project("Scripts", "None", true, array(), ""); // Scripts
 create_project("Sculpting", "None", true, array(), "Mesh sculpting."); // Sculpting
 create_project("Video Sequencer", "None", true, array(), "Video editor built into Blender."); // Sequencer
 create_project("Text Editor", "None", true, array(), "Text editor built into Blender."); // Text editor
 //create_project("Tools", "None", true, array(), ""); // Tools
+create_project("Game Engine", "None", true, array(), "Blender game engine.");
 

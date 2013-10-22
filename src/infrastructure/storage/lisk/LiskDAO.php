@@ -1220,10 +1220,20 @@ abstract class LiskDAO {
         // If we are using autoincrement IDs, let MySQL assign the value for the
         // ID column, if it is empty. If the caller has explicitly provided a
         // value, use it.
-        $id_key = $this->getIDKeyForUse();
-        if (empty($data[$id_key])) {
-          unset($data[$id_key]);
-        }
+		if ($this->__overrideID == null) {
+			$id_key = $this->getIDKeyForUse();
+			if (empty($data[$id_key])) {
+			  unset($data[$id_key]);
+			}
+		}
+		else {
+			// Blender hack to assign custom IDs
+			$id_key = $this->getIDKeyForUse();
+			if (empty($data[$id_key])) {
+                $this->setID($this->__overrideID);
+				$data[$id_key] = $this->__overrideID;
+			}
+		}
         break;
       case self::IDS_COUNTER:
         // If we are using counter IDs, assign a new ID if we don't already have
@@ -1259,7 +1269,7 @@ abstract class LiskDAO {
       $data);
 
     // Only use the insert id if this table is using auto-increment ids
-    if ($id_mechanism === self::IDS_AUTOINCREMENT) {
+    if ($this->__overrideID == null && $id_mechanism === self::IDS_AUTOINCREMENT) {
       $this->setID($conn->getInsertID());
     }
 
@@ -1363,6 +1373,14 @@ abstract class LiskDAO {
    */
   protected function didWriteData() {}
 
+  /* Blender Hacks */
+  public function setOverrideDate($date) {
+    $this->__overrideDate = $date;
+  }
+
+  public function setOverrideID($id) {
+     $this->__overrideID = $id;
+  }
 
   /**
    * Hook to make internal object state changes prior to INSERT, REPLACE or
@@ -1374,10 +1392,17 @@ abstract class LiskDAO {
     $use_timestamps = $this->getConfigOption(self::CONFIG_TIMESTAMPS);
 
     if ($use_timestamps) {
-      if (!$this->getDateCreated()) {
-        $this->setDateCreated(time());
+      /* Blender Hacks */
+      if ($this->__overrideDate == null) {
+        if (!$this->getDateCreated()) {
+          $this->setDateCreated(time());
+        }
+        $this->setDateModified(time());
       }
-      $this->setDateModified(time());
+      else {
+        $this->setDateCreated($this->__overrideDate);
+        $this->setDateModified($this->__overrideDate);
+      }
     }
 
     if ($this->getConfigOption(self::CONFIG_AUX_PHID) && !$this->getPHID()) {
