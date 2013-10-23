@@ -8,6 +8,7 @@ final class ManiphestTransactionPreviewController extends ManiphestController {
   private $id;
 
   public function willProcessRequest(array $data) {
+    parent::willProcessRequest($data);
     $this->id = $data['id'];
   }
 

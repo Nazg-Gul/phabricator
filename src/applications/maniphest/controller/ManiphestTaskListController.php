@@ -11,6 +11,7 @@ final class ManiphestTaskListController
   }
 
   public function willProcessRequest(array $data) {
+    parent::willProcessRequest($data);
     $this->queryKey = idx($data, 'queryKey');
   }
 
@@ -18,7 +19,7 @@ final class ManiphestTaskListController
     $request = $this->getRequest();
     $controller = id(new PhabricatorApplicationSearchController($request))
       ->setQueryKey($this->queryKey)
-      ->setSearchEngine(new ManiphestTaskSearchEngine())
+      ->setSearchEngine((new ManiphestTaskSearchEngine())->setProjectKey($this->projectKey))
       ->setNavigation($this->buildSideNavView());
 
     return $this->delegateToController($controller);

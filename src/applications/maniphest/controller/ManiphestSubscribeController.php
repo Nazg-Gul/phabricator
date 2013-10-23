@@ -6,6 +6,7 @@ final class ManiphestSubscribeController extends ManiphestController {
   private $action;
 
   public function willProcessRequest(array $data) {
+    parent::willProcessRequest($data);
     $this->id = $data['id'];
     $this->action = $data['action'];
   }

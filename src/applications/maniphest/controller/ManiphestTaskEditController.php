@@ -5,6 +5,7 @@ final class ManiphestTaskEditController extends ManiphestController {
   private $id;
 
   public function willProcessRequest(array $data) {
+    parent::willProcessRequest($data);
     $this->id = idx($data, 'id');
   }
 

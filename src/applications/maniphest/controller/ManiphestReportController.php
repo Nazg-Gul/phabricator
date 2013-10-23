@@ -8,6 +8,7 @@ final class ManiphestReportController extends ManiphestController {
   private $view;
 
   public function willProcessRequest(array $data) {
+    parent::willProcessRequest($data);
     $this->view = idx($data, 'view');
   }
 

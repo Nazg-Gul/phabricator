@@ -3,6 +3,8 @@
 final class ManiphestTaskSearchEngine
   extends PhabricatorApplicationSearchEngine {
 
+  private $projectKey;
+
   public function getCustomFieldObject() {
     return new ManiphestTask();
   }
@@ -134,13 +136,22 @@ final class ManiphestTaskSearchEngine
       $query->withFullTextSearch($fulltext);
     }
 
-    $with_no_project = $saved->getParameter('withNoProject');
-    if ($with_no_project) {
-      $query->withAllProjects(array(ManiphestTaskOwner::PROJECT_NO_PROJECT));
+    if ($this->projectKey) {
+      $project = id(new PhabricatorProjectQuery())
+        ->setViewer($this->requireViewer())
+        ->withIDs(array($this->projectKey))
+        ->executeOne();
+
+      $query->withAllProjects(array($project->getPHID()));
     } else {
-      $project_phids = $saved->getParameter('allProjectPHIDs');
-      if ($project_phids) {
-        $query->withAllProjects($project_phids);
+      $with_no_project = $saved->getParameter('withNoProject');
+      if ($with_no_project) {
+        $query->withAllProjects(array(ManiphestTaskOwner::PROJECT_NO_PROJECT));
+      } else {
+        $project_phids = $saved->getParameter('allProjectPHIDs');
+        if ($project_phids) {
+          $query->withAllProjects($project_phids);
+        }
       }
     }
 
@@ -353,6 +364,8 @@ final class ManiphestTaskSearchEngine
   }
 
   protected function getURI($path) {
+    if ($this->projectKey)
+      return '/maniphest/project/' . $this->projectKey . '/'.$path;
     return '/maniphest/'.$path;
   }
 
@@ -435,4 +448,8 @@ final class ManiphestTaskSearchEngine
     );
   }
 
+  function setProjectKey($projectKey) {
+    $this->projectKey = $projectKey;
+    return $this;
+  }
 }

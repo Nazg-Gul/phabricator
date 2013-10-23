@@ -8,6 +8,7 @@ final class ManiphestExportController extends ManiphestController {
   private $key;
 
   public function willProcessRequest(array $data) {
+    parent::willProcessRequest($data);
     $this->key = $data['key'];
     return $this;
   }
@@ -61,7 +62,8 @@ final class ManiphestExportController extends ManiphestController {
       ->executeOne();
     if (!$saved) {
       $engine = id(new ManiphestTaskSearchEngine())
-        ->setViewer($user);
+        ->setViewer($user)
+        ->setProjectKey($this->projectKey);
       if ($engine->isBuiltinQuery($this->key)) {
         $saved = $engine->buildSavedQueryFromBuiltin($this->key);
       }

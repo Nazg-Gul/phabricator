@@ -2,6 +2,12 @@
 
 abstract class ManiphestController extends PhabricatorController {
 
+  protected $projectKey;
+
+  public function willProcessRequest(array $data) {
+    $this->projectKey = idx($data, 'projectKey');
+  }
+
   public function buildApplicationMenu() {
     return $this->buildSideNavView(true)->getMenu();
   }
@@ -16,8 +22,19 @@ abstract class ManiphestController extends PhabricatorController {
       $nav->addFilter('create', pht('Create Task'));
     }
 
+    $nav->addLabel(pht('Projects'));
+    $nav->addFilter('', 'All Projects');
+    $projects = id(new PhabricatorProjectQuery())
+      ->setViewer($user)
+      ->execute();
+
+    foreach ($projects as $project) {
+      $nav->addFilter('project/' . $project->getID(), pht($project->getName()));
+    }
+
     id(new ManiphestTaskSearchEngine())
       ->setViewer($user)
+      ->setProjectKey($this->projectKey)
       ->addNavigationItems($nav->getMenu());
 
     if ($user->isLoggedIn()) {
@@ -33,6 +50,19 @@ abstract class ManiphestController extends PhabricatorController {
 
   protected function buildApplicationCrumbs() {
     $crumbs = parent::buildApplicationCrumbs();
+
+    if ($this->projectKey) {
+      $user = $this->getRequest()->getUser();
+      $project = id(new PhabricatorProjectQuery())
+        ->setViewer($user)
+        ->withIDs(array($this->projectKey))
+        ->executeOne();
+      if ($project) {
+        $crumbs->addCrumb(
+          id(new PhabricatorCrumbView())
+            ->setName(pht($project->getName())));
+      }
+    }
 
     $crumbs->addAction(
       id(new PHUIListItemView())
