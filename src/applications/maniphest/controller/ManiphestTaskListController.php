@@ -17,9 +17,11 @@ final class ManiphestTaskListController
 
   public function processRequest() {
     $request = $this->getRequest();
+    $searchEngine = new ManiphestTaskSearchEngine();
+    $searchEngine->setProjectKey($this->projectKey);
     $controller = id(new PhabricatorApplicationSearchController($request))
       ->setQueryKey($this->queryKey)
-      ->setSearchEngine((new ManiphestTaskSearchEngine())->setProjectKey($this->projectKey))
+      ->setSearchEngine($searchEngine)
       ->setNavigation($this->buildSideNavView());
 
     return $this->delegateToController($controller);
