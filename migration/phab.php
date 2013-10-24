@@ -55,6 +55,9 @@ function create_custom_field_transaction($task, $user, $name, $value, $template,
 			$transaction->setOverrideDate($date);
 
 			$transactions[] = $transaction;
+
+			// XXX not working!
+			//$aux_field->applyApplicationTransactionExternalEffects($transaction);
 		}
 	}
 
@@ -104,7 +107,7 @@ function create_task($user, $id, $title, $projects, $description, $assign_user, 
 	if($extension_field != "None")
 		$transactions = array_merge($transactions, create_custom_field_transaction($task, $user, "blender:extension-type", $extension_field, $template, $date));
 
-	$editor = id(new ManiphestTransactionEditorPro())
+	$editor = id(new ManiphestTransactionEditor())
 	->setActor($user)
 	->setContentSource($content_source)
 	->setContinueOnNoEffect(true)
@@ -133,7 +136,7 @@ function create_comment($task, $user, $description, $date)
 	$transactions[] = $transaction;
 
 	/* apply */
-    $editor = id(new ManiphestTransactionEditorPro())
+    $editor = id(new ManiphestTransactionEditor())
       ->setActor($user)
       ->setContentSource($content_source)
       ->setContinueOnMissingFields(true)
@@ -176,7 +179,7 @@ function create_file($task, $user, $name, $contents, $date)
 	$transactions[] = $transaction;
 
 	/* apply */
-    $editor = id(new ManiphestTransactionEditorPro())
+    $editor = id(new ManiphestTransactionEditor())
       ->setActor($user)
       ->setContentSource($content_source)
       ->setContinueOnMissingFields(true)
@@ -206,7 +209,7 @@ function set_status($task, $user, $status, $date)
 		$transactions[] = $transaction;
 	}
 
-	$editor = id(new ManiphestTransactionEditorPro())
+	$editor = id(new ManiphestTransactionEditor())
 	->setActor($user)
 	->setContentSource($content_source)
 	->setContinueOnNoEffect(true)
