@@ -63,7 +63,8 @@ final class ManiphestExportController extends ManiphestController {
     if (!$saved) {
       $engine = id(new ManiphestTaskSearchEngine())
         ->setViewer($user)
-        ->setProjectKey($this->projectKey);
+        ->setProjectKey($this->projectKey)
+        ->setTaskTypeKey($this->taskTypeKey);
       if ($engine->isBuiltinQuery($this->key)) {
         $saved = $engine->buildSavedQueryFromBuiltin($this->key);
       }

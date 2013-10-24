@@ -4,6 +4,7 @@ final class ManiphestTaskSearchEngine
   extends PhabricatorApplicationSearchEngine {
 
   private $projectKey;
+  private $taskTypeKey;
 
   public function getCustomFieldObject() {
     return new ManiphestTask();
@@ -181,7 +182,26 @@ final class ManiphestTaskSearchEngine
       $query->withDateCreatedBefore($end);
     }
 
-    $this->applyCustomFieldsToQuery($query, $saved);
+    if ($this->taskTypeKey) {
+      $list = $this->getCustomFieldList();
+      if (!$list)
+        throw new Exception('Custom fields for manihpest are not found.');
+
+      foreach ($list->getFields() as $field) {
+        if ($field->getFieldName() == 'Type') {
+          $value = array($this->taskTypeKey);
+        } else {
+          $key = $this->getKeyForCustomField($field);
+          $value = $saved->getParameter($key);
+        }
+        $field->applyApplicationSearchConstraintToQuery(
+          $this,
+          $query,
+          $value);
+      }
+    } else {
+      $this->applyCustomFieldsToQuery($query, $saved);
+    }
 
     return $query;
   }
@@ -364,9 +384,12 @@ final class ManiphestTaskSearchEngine
   }
 
   protected function getURI($path) {
+    $url = '/maniphest';
     if ($this->projectKey)
-      return '/maniphest/project/' . $this->projectKey . '/'.$path;
-    return '/maniphest/'.$path;
+      $url .= '/project/'.$this->projectKey;
+    if ($this->taskTypeKey)
+      $url .= '/type/'.$this->taskTypeKey;
+    return $url.'/'.$path;
   }
 
   public function getBuiltinQueryNames() {
@@ -450,6 +473,11 @@ final class ManiphestTaskSearchEngine
 
   function setProjectKey($projectKey) {
     $this->projectKey = $projectKey;
+    return $this;
+  }
+
+  function setTaskTypeKey($taskTypeKey) {
+    $this->taskTypeKey = $taskTypeKey;
     return $this;
   }
 }

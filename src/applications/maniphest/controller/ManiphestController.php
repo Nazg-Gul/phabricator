@@ -3,13 +3,70 @@
 abstract class ManiphestController extends PhabricatorController {
 
   protected $projectKey;
+  protected $taskTypeKey;
 
   public function willProcessRequest(array $data) {
     $this->projectKey = idx($data, 'projectKey');
+    $this->taskTypeKey = idx($data, 'taskTypeKey');
   }
 
   public function buildApplicationMenu() {
     return $this->buildSideNavView(true)->getMenu();
+  }
+
+  private function getBlenderTaskTypeField() {
+    $config = PhabricatorEnv::getEnvConfig(
+      'maniphest.custom-field-definitions',
+      array());
+    $task_type = idx($config, 'blender:task-type');
+    if (!$task_type) {
+      throw new Exception(
+        'Custom definition for blender:task-type ' .
+        'is not found in maniphest settings.');
+    }
+    return $task_type;
+  }
+
+  public function getBlenderTaskTypes() {
+    $task_types = $this->getBlenderTaskTypeField();
+    $options = idx($task_types, 'options');
+    if (!$options) {
+      throw new Exception(
+        'Custom definition for blender:task-type ' .
+        'doesn\'t have options field.');
+    }
+    return $options;
+  }
+
+  private function buildProjectsNavigation($nav) {
+    $user = $this->getRequest()->getUser();
+    if (!$this->projectKey) {
+      $nav->addLabel(pht('Projects'));
+      $nav->addFilter('', 'All Projects');
+      $projects = id(new PhabricatorProjectQuery())
+        ->setViewer($user)
+        ->execute();
+
+      foreach ($projects as $project) {
+        $nav->addFilter(
+          'project/' . $project->getID(),
+          pht($project->getName()));
+      }
+    } else if (!$this->taskTypeKey) {
+      $project = id(new PhabricatorProjectQuery())
+        ->setViewer($user)
+        ->withIDs(array($this->projectKey))
+        ->executeOne();
+      if ($project) {
+        $nav->addLabel(pht($project->getName()));
+        $task_types = $this->getBlenderTaskTypes();
+        foreach ($task_types as $id => $name) {
+          $nav->addFilter(
+            'project/' . $this->projectKey . '/type/' . $id,
+            pht($name));
+        }
+      }
+    }
   }
 
   public function buildSideNavView($for_app = false) {
@@ -22,19 +79,12 @@ abstract class ManiphestController extends PhabricatorController {
       $nav->addFilter('create', pht('Create Task'));
     }
 
-    $nav->addLabel(pht('Projects'));
-    $nav->addFilter('', 'All Projects');
-    $projects = id(new PhabricatorProjectQuery())
-      ->setViewer($user)
-      ->execute();
-
-    foreach ($projects as $project) {
-      $nav->addFilter('project/' . $project->getID(), pht($project->getName()));
-    }
+    $this->buildProjectsNavigation($nav);
 
     id(new ManiphestTaskSearchEngine())
       ->setViewer($user)
       ->setProjectKey($this->projectKey)
+      ->setTaskTypeKey($this->taskTypeKey)
       ->addNavigationItems($nav->getMenu());
 
     if ($user->isLoggedIn()) {
@@ -58,9 +108,25 @@ abstract class ManiphestController extends PhabricatorController {
         ->withIDs(array($this->projectKey))
         ->executeOne();
       if ($project) {
+        $crumb = id(new PhabricatorCrumbView())
+            ->setName(pht($project->getName()));
+        if ($this->taskTypeKey)
+          $crumb->setHref('/maniphest/project/'.$this->projectKey);
+        $crumbs->addCrumb($crumb);
+      } else {
+        throw new Exception('Unknown project was passed via the url');
+      }
+    }
+
+    if ($this->taskTypeKey) {
+      $task_types = $this->getBlenderTaskTypes();
+      $type = idx($task_types, $this->taskTypeKey);
+      if ($type) {
         $crumbs->addCrumb(
           id(new PhabricatorCrumbView())
-            ->setName(pht($project->getName())));
+            ->setName(pht($type)));
+      } else {
+        throw new Exception('Unknown task type was passed via the url');
       }
     }
 

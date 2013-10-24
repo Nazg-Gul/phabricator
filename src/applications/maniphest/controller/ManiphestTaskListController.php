@@ -19,6 +19,7 @@ final class ManiphestTaskListController
     $request = $this->getRequest();
     $searchEngine = new ManiphestTaskSearchEngine();
     $searchEngine->setProjectKey($this->projectKey);
+    $searchEngine->setTaskTypeKey($this->taskTypeKey);
     $controller = id(new PhabricatorApplicationSearchController($request))
       ->setQueryKey($this->queryKey)
       ->setSearchEngine($searchEngine)
