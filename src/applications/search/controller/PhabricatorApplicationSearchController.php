@@ -1,6 +1,6 @@
 <?php
 
-final class PhabricatorApplicationSearchController
+/*final*/ class PhabricatorApplicationSearchController
   extends PhabricatorSearchBaseController {
 
   private $searchEngine;
@@ -86,6 +86,19 @@ final class PhabricatorApplicationSearchController
     }
   }
 
+  protected function getDescruptionForQuery($query) {
+    if ($query->getIsBuiltin()) {
+      $description = pht(
+        'Showing results for query "%s".',
+        $query->getQueryName());
+    } else {
+      $description = pht(
+        'Showing results for saved query "%s".',
+        $query->getQueryName());
+    }
+    return $description;
+  }
+
   private function processSearchRequest() {
     $parent = $this->getDelegatingController();
     $request = $this->getRequest();
@@ -166,16 +179,7 @@ final class PhabricatorApplicationSearchController
     $filter_view = id(new AphrontListFilterView())->appendChild($form);
 
     if ($run_query && $named_query) {
-      if ($named_query->getIsBuiltin()) {
-        $description = pht(
-          'Showing results for query "%s".',
-          $named_query->getQueryName());
-      } else {
-        $description = pht(
-          'Showing results for saved query "%s".',
-          $named_query->getQueryName());
-      }
-
+      $description = $this->getDescruptionForQuery($named_query);
       $filter_view->setCollapsed(
         pht('Edit Query...'),
         pht('Hide Query'),

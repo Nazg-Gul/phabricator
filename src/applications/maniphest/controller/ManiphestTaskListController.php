@@ -20,8 +20,11 @@ final class ManiphestTaskListController
     $searchEngine = new ManiphestTaskSearchEngine();
     $searchEngine->setProjectKey($this->projectKey);
     $searchEngine->setTaskTypeKey($this->taskTypeKey);
-    $controller = id(new PhabricatorApplicationSearchController($request))
+    $controller = id(new ManiphestSearchController($request))
       ->setQueryKey($this->queryKey)
+      ->setProjectKey($this->projectKey)
+      ->setTaskTypes($this->getBlenderTaskTypes())
+      ->setTaskTypeKey($this->taskTypeKey)
       ->setSearchEngine($searchEngine)
       ->setNavigation($this->buildSideNavView());
 

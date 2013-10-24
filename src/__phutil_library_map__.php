@@ -799,6 +799,7 @@ phutil_register_library_map(array(
     'ManiphestRemarkupRule' => 'applications/maniphest/remarkup/ManiphestRemarkupRule.php',
     'ManiphestReplyHandler' => 'applications/maniphest/mail/ManiphestReplyHandler.php',
     'ManiphestReportController' => 'applications/maniphest/controller/ManiphestReportController.php',
+    'ManiphestSearchController' => 'applications/maniphest/controller/ManiphestSearchController.php',
     'ManiphestSearchIndexer' => 'applications/maniphest/search/ManiphestSearchIndexer.php',
     'ManiphestSubpriorityController' => 'applications/maniphest/controller/ManiphestSubpriorityController.php',
     'ManiphestSubscribeController' => 'applications/maniphest/controller/ManiphestSubscribeController.php',
