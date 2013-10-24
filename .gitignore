@@ -39,3 +39,6 @@
 
 # User extensions
 /src/extensions/*
+
+# blender migration files
+migration/dump/
