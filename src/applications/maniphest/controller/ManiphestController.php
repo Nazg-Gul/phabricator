@@ -42,16 +42,65 @@ abstract class ManiphestController extends PhabricatorController {
     $user = $this->getRequest()->getUser();
     if (!$this->projectKey) {
       $nav->addLabel(pht('Projects'));
-      $nav->addFilter('', 'All Projects');
+
+      $show_item_id = celerity_generate_unique_node_id();
+      $hide_item_id = celerity_generate_unique_node_id();
+
+      $show_item = id(new PHUIListItemView())
+        ->setName(pht('Show all projects'))
+        ->setHref('#')
+        ->addSigil('reveal-content')
+        ->setID($show_item_id);
+
+      $hide_item = id(new PHUIListItemView())
+        ->setName(pht('Hide inactive Projects'))
+        ->setHref('#')
+        ->setStyle('display: none')
+        ->setID($hide_item_id)
+        ->addSigil('reveal-content');
+
+      $nav->addMenuItem($show_item);
+      $nav->addMenuItem($hide_item);
+
       $projects = id(new PhabricatorProjectQuery())
         ->setViewer($user)
         ->execute();
+      $project_ids = array($hide_item_id);
 
       foreach ($projects as $project) {
-        $nav->addFilter(
-          'project/' . $project->getID(),
-          pht($project->getName()));
+        $url = 'project/' . $project->getID();
+        $name = $project->getName();
+        $is_hide = !in_array(
+          $name, array(
+            'BF Blender',
+            'Game Engine'));
+        if ($is_hide) {
+          $label_id = celerity_generate_unique_node_id();
+          $project_ids[] = $label_id;
+          $nav->addMenuItem(
+            id(new PHUIListItemView())
+              ->setName(pht($name))
+              ->setType(PHUIListItemView::TYPE_LINK)
+              ->setHref($url)
+              ->setStyle('display: none;')
+              ->setID($label_id));
+        } else {
+          $nav->addFilter($url, pht($name));
+        }
       }
+
+      Javelin::initBehavior('phabricator-reveal-content');
+
+      $show_item->setMetadata(
+        array(
+          'showIDs' => $project_ids,
+          'hideIDs' => array($show_item_id),
+        ));
+      $hide_item->setMetadata(
+        array(
+          'showIDs' => array($show_item_id),
+          'hideIDs' => $project_ids,
+        ));
     } else if (!$this->taskTypeKey) {
       $project = id(new PhabricatorProjectQuery())
         ->setViewer($user)
