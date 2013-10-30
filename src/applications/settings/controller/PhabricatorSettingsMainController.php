@@ -12,7 +12,7 @@ final class PhabricatorSettingsMainController
   public function processRequest() {
     $request = $this->getRequest();
 
-    $panels = $this->buildPanels();
+    $panels = $this->buildPanels($request->getUser());
     $nav = $this->renderSideNav($panels);
 
     $key = $nav->selectFilter($this->key, head($panels)->getPanelKey());
@@ -34,7 +34,7 @@ final class PhabricatorSettingsMainController
       ));
   }
 
-  private function buildPanels() {
+  private function buildPanels($user) {
     $panel_specs = id(new PhutilSymbolLoader())
       ->setAncestorClass('PhabricatorSettingsPanel')
       ->setConcreteOnly(true)
@@ -52,6 +52,9 @@ final class PhabricatorSettingsMainController
     $result = array();
     foreach ($panels as $key => $panel) {
       if (!$panel->isEnabled()) {
+        continue;
+      }
+      if ($user && !$panel->isEnabledForUser($user)) {
         continue;
       }
       if (!empty($result[$key])) {
@@ -87,7 +90,7 @@ final class PhabricatorSettingsMainController
   }
 
   public function buildApplicationMenu() {
-    $panels = $this->buildPanels();
+    $panels = $this->buildPanels(null);
     return $this->renderSideNav($panels)->getMenu();
   }
 

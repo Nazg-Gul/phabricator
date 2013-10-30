@@ -68,6 +68,9 @@ abstract class PhabricatorSettingsPanel {
     return true;
   }
 
+  public function isEnabledForUser($user) {
+    return true;
+  }
 
   /**
    * You can use this callback to generate multiple similar panels which all

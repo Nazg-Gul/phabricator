@@ -116,6 +116,28 @@ final class PhabricatorAuthProviderPassword
       $errors[] = pht('Username or password are incorrect.');
     }
 
+    if (true) {
+      // blender hack
+      $root = dirname(phutil_get_library_root('phabricator'));
+      require $root.'/migration/dedup.php';
+
+      $missing_username = $request->getStr('username');
+
+      $find_user = id(new PhabricatorUser())->loadOneWhere(
+        'username = %s',
+         $missing_username);
+
+      if (!$find_user && array_key_exists($missing_username, $migrate_dedup_users)) {
+        $errors = array();
+        $errors[] = pht('This account was merged into account "' .
+                        $migrate_dedup_users[$missing_username] .
+                        '", because Phabricator does not support multiple accounts with the same email address. ' .
+                        'Please login with that account instead ' .
+                        '(optionally recovering your password if you forgot it). ' .
+                        'After logging in you will be able to change your username in the User Settings.');
+      }
+    }
+
     if ($errors) {
       $errors = id(new AphrontErrorView())->setErrors($errors);
     }

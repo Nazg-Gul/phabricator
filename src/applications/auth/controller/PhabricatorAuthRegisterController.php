@@ -196,6 +196,14 @@ final class PhabricatorAuthRegisterController
         }
       }
 
+      // blender hack
+      $root = dirname(phutil_get_library_root('phabricator'));
+      require $root.'/migration/dedup.php';
+      if (array_key_exists($request->getStr('username'), $migrate_dedup_users)) {
+        $e_username = pht('Duplicate');
+        $errors[] = pht('Username is already reserved.');
+      }
+
       if (!$errors) {
         $image = $this->loadProfilePicture($account);
         if ($image) {
