@@ -53,7 +53,6 @@ function create_custom_field_transaction($task, $user, $name, $value, $template,
       $transaction->setNewValue($new);
       $transaction->setOverrideDate($date);
 
-      // TODO: hide transactions for irrelevant fields
       $transactions[] = $transaction;
     }
   }

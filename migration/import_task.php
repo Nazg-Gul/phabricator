@@ -123,6 +123,10 @@ for($id = intval($argv[1]); $id < intval($argv[2]); $id+=1) {
           $priority = 40;
           $status = ManiphestTaskStatus::STATUS_CLOSED_INVALID;
           break;
+        case "None": /* happens for old bugs that were closed */
+          $priority = 40;
+          $status = ManiphestTaskStatus::STATUS_CLOSED_INVALID;
+          break;
         case "Todo / Closed":
           $task_type = "To Do";
           $priority = 40;
@@ -169,7 +173,10 @@ for($id = intval($argv[1]); $id < intval($argv[2]); $id+=1) {
           $priority = 40;
           $status = ManiphestTaskStatus::STATUS_OPEN;
           break;
-        case "None":
+        case "None": /* happens for old bugs that were closed */
+          $priority = 40;
+          $status = ManiphestTaskStatus::STATUS_CLOSED_INVALID;
+          break;
         case "Reopened":
         case "Investigate":
         case "Ready":

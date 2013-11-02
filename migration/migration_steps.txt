@@ -95,7 +95,10 @@ D) ACCIDENTAL EMAIL SENDING
 ===========================
 
 All email addresses have been modified to avoid sending emails while users and tasks are being created.
-Either disable email sending code in phab, or disable postfix, or figure out what happens when you try to send a ton of emails to invalid addresses.
+
+However to avoid the DB filling up and postfix trying to send up loads of mails to invalid addresses, apply this patch to disable all feed logging and mails before import:
+
+disable_feed_mail.patch
 
 
 E) IMPORT USERS AND PROJECTS
@@ -126,6 +129,7 @@ G) TESTS
 * Check if number of developers with commit rights match
 * Check if number of open bugs and patches roughly match
 * Check for report status, attached files, missing comments, etc
+* Unpatch disable_feed_mail.patch
 * Add email address to you user settings to test (it's set to an invalid one for testing)
 * Test if emails, password reset, etc works
 

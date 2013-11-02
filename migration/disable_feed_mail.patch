@@ -1,0 +1,44 @@
+diff --git a/src/applications/feed/PhabricatorFeedStoryPublisher.php b/src/applications/feed/PhabricatorFeedStoryPublisher.php
+index ee0950f..008f8e8 100644
+--- a/src/applications/feed/PhabricatorFeedStoryPublisher.php
++++ b/src/applications/feed/PhabricatorFeedStoryPublisher.php
+@@ -52,6 +52,8 @@ final class PhabricatorFeedStoryPublisher {
+   }
+ 
+   public function publish() {
++    return null;
++
+     $class = $this->storyType;
+     if (!$class) {
+       throw new Exception("Call setStoryType() before publishing!");
+diff --git a/src/applications/metamta/storage/PhabricatorMetaMTAMail.php b/src/applications/metamta/storage/PhabricatorMetaMTAMail.php
+index a6c2e1e..920baf2 100644
+--- a/src/applications/metamta/storage/PhabricatorMetaMTAMail.php
++++ b/src/applications/metamta/storage/PhabricatorMetaMTAMail.php
+@@ -301,6 +301,8 @@ final class PhabricatorMetaMTAMail extends PhabricatorMetaMTADAO {
+   public function saveAndSend() {
+     $ret = null;
+ 
++    return $ret;
++
+     if (PhabricatorEnv::getEnvConfig('metamta.send-immediately')) {
+       $ret = $this->sendNow();
+     } else {
+@@ -311,6 +313,8 @@ final class PhabricatorMetaMTAMail extends PhabricatorMetaMTADAO {
+   }
+ 
+   protected function didWriteData() {
++    return;
++
+     parent::didWriteData();
+ 
+     if (!$this->getWorkerTaskID()) {
+@@ -343,6 +347,8 @@ final class PhabricatorMetaMTAMail extends PhabricatorMetaMTADAO {
+     $force_send = false,
+     PhabricatorMailImplementationAdapter $mailer = null) {
+ 
++    return null;
++
+     if ($mailer === null) {
+       $mailer = $this->buildDefaultMailer();
+     }
