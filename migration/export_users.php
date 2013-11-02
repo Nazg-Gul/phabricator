@@ -38,16 +38,16 @@ $musers = array();
 
 for ($i = 0; $i < count ($user_names); $i++)
 {
-	$muser = new MigrateUser();
-	$muser->id = $user_ids[$i];
-	$muser->password = $user_pws[$i];
-	$muser->name = $user_names[$i];
-	$muser->realname = trim($user_realnames[$i]);
-	$muser->email = $user_emails[$i];
-	$muser->date = $user_dates[$i];
-	$muser->timezone = $user_timezones[$i];
+  $muser = new MigrateUser();
+  $muser->id = $user_ids[$i];
+  $muser->password = $user_pws[$i];
+  $muser->name = $user_names[$i];
+  $muser->realname = trim($user_realnames[$i]);
+  $muser->email = $user_emails[$i];
+  $muser->date = $user_dates[$i];
+  $muser->timezone = $user_timezones[$i];
 
-	$musers[] = $muser;
+  $musers[] = $muser;
 }
 
 file_put_contents('dump/users', serialize($musers));

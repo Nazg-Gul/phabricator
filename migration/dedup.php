@@ -2,10 +2,6 @@
 
 $migrate_dedup_users = array();
 
-// XXX
-$migrate_dedup_users["quick_testing_hack"] = "brechtvl";
-$migrate_dedup_users["quick_testing_more"] = "brechtvl";
-
 $migrate_dedup_users["midiclub"] = "midclub";
 $migrate_dedup_users["trip"] = "car";
 $migrate_dedup_users["thunderbolt"] = "thunderbolt16";

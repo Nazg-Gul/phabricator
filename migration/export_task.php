@@ -29,8 +29,8 @@ require_once 'storage.php';
 
 function lookup_user_name($user_id)
 {
-	$res = db_query_params ('SELECT user_name FROM users WHERE user_id=$1', array($user_id));
-	return db_result($res, 0, 'user_name');
+  $res = db_query_params ('SELECT user_name FROM users WHERE user_id=$1', array($user_id));
+  return db_result($res, 0, 'user_name');
 }
 
 for ($aid=intval($argv[1]); $aid<intval($argv[2]); $aid++) {
@@ -40,32 +40,32 @@ $group_id = null;
 $atid = null;
 
 if ($aid && (!$group_id && !$atid)) {
-	$a =& artifact_get_object($aid);
+  $a =& artifact_get_object($aid);
 
-	if (!$a || !is_object($a) || $a->isError()) {
-		echo "SKIP " . $aid . "\n";
-		continue;
-	} else {
-		echo "GO " . $aid . "\n";
-		$group_id=$a->ArtifactType->Group->getID();
-		$atid=$a->ArtifactType->getID();
-	}
+  if (!$a || !is_object($a) || $a->isError()) {
+    echo "SKIP " . $aid . "\n";
+    continue;
+  } else {
+    echo "GO " . $aid . "\n";
+    $group_id=$a->ArtifactType->Group->getID();
+    $atid=$a->ArtifactType->getID();
+  }
 }
 
 $group =& group_get_object($group_id);
 
 if (!$group || !is_object($group) || $group->isError())
-	echo "Group invalid\n";
+  echo "Group invalid\n";
 
 $ath = new ArtifactTypeHtml($group,$atid);
 
 if (!$ath || !is_object($ath) || $ath->isError())
-	echo "Artifact type invalid\n";
+  echo "Artifact type invalid\n";
 
 $ah=new ArtifactHtml($ath,$aid);
 
 if (!$ah || !is_object($ah) || $ah->isError())
-	echo "Artifact invalid\n";
+  echo "Artifact invalid\n";
 
 /* create task */
 $mtasks = array();
@@ -88,11 +88,11 @@ $result= $ah->getMessages();
 $rows=db_numrows($result);
 
 for ($i=0; $i < $rows; $i++) {
-	$mcomment = new MigrateComment();
-	$mcomment->user = db_result($result, $i,'user_name');
-	$mcomment->description = db_result($result, $i, 'body');
-	$mcomment->date = db_result($result, $i, 'adddate');
-	$mtask->comments[] = $mcomment;
+  $mcomment = new MigrateComment();
+  $mcomment->user = db_result($result, $i,'user_name');
+  $mcomment->description = db_result($result, $i, 'body');
+  $mcomment->date = db_result($result, $i, 'adddate');
+  $mtask->comments[] = $mcomment;
 }
 
 /* history */
@@ -103,37 +103,36 @@ $historyrows= db_numrows($history);
 $file_list =& $ah->getFiles();
 $rows=count($file_list);
 
-// TODO skipping attachments for now
-/*for ($i=0; $i<$rows; $i++) {
-	$af = $file_list[$i];
+for ($i=0; $i<$rows; $i++) {
+  $af = $file_list[$i];
 
-	$afd=new ArtifactFile($ah,$af->getID());
+  $afd=new ArtifactFile($ah,$af->getID());
 
-	$fileuser = null;
+  $fileuser = null;
 
-	for ($j=0; $j < $historyrows; $j++) {
-		$hvalue = db_result($history, $j, 'old_value');
-		if($hvalue == $af->getID() + ": " + $af->getName())
-			$fileuser = db_result($history, $j, 'user_name');
-	}
+  for ($j=0; $j < $historyrows; $j++) {
+    $hvalue = db_result($history, $j, 'old_value');
+    if($hvalue == $af->getID() + ": " + $af->getName())
+      $fileuser = db_result($history, $j, 'user_name');
+  }
 
-	$mfile = new MigrateFile();
-	$mfile->user = $fileuser;
-	$mfile->name = $af->getName();
-	$mfile->date = $af->getDate();
-	$mfile->type = $af->getType();
-	$mfile->contents = $afd->getData();
-	$mtask->files[] = $mfile;
-}*/
+  $mfile = new MigrateFile();
+  $mfile->user = $fileuser;
+  $mfile->name = $af->getName();
+  $mfile->date = $af->getDate();
+  $mfile->type = $af->getType();
+  $mfile->contents = $afd->getData();
+  $mtask->files[] = $mfile;
+}
 
 /* history */
 for ($i=0; $i < $historyrows; $i++) {
-	$mhistory = new MigrateHistory();
-	$mhistory->user = db_result($history, $i, 'user_name');
-	$mhistory->date = db_result($history, $i, 'entrydate');
-	$mhistory->field = db_result($history, $i, 'field_name');
-	$mhistory->old = db_result($history, $i, 'old_value');
-	$mtask->history[] = $mhistory;
+  $mhistory = new MigrateHistory();
+  $mhistory->user = db_result($history, $i, 'user_name');
+  $mhistory->date = db_result($history, $i, 'entrydate');
+  $mhistory->field = db_result($history, $i, 'field_name');
+  $mhistory->old = db_result($history, $i, 'old_value');
+  $mtask->history[] = $mhistory;
 }
 
 /* subscribers */
@@ -142,19 +141,19 @@ $ccids = util_result_column_to_array($res);
 
 $ccs = array();
 foreach($ccids as $ccid)
-	if($ccid)
-		$ccs[] = lookup_user_name($ccid);
+  if($ccid)
+    $ccs[] = lookup_user_name($ccid);
 
 if($ah->getAssignedTo())
-	$ccs[] = lookup_user_name($ah->getAssignedTo());
+  $ccs[] = lookup_user_name($ah->getAssignedTo());
 if($ah->getSubmittedBy())
-	$ccs[] = lookup_user_name($ah->getSubmittedBy());
+  $ccs[] = lookup_user_name($ah->getSubmittedBy());
 
 $result= $ah->getMessages();
 $rows=db_numrows($result);
 
 for ($i=0; $i < $rows; $i++)
-	$ccs[] = lookup_user_name(db_result($result,$i,'user_id'));
+  $ccs[] = lookup_user_name(db_result($result,$i,'user_id'));
 
 $mtask->ccs = array_unique($ccs);
 $mtask->extra_fields = $ah->getExtraFieldDataText();

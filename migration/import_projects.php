@@ -7,11 +7,9 @@ require_once 'storage.php';
 require_once 'adapt.php';
 require_once 'phab.php';
 
-// TODO: add all necessary projects
-
 /* projects */
 create_project("BF Blender", "None", true, $bf_developers, "Blender Foundation official release.");
-create_project("Extensions", "None", true, $addon_developers, "Addon scripts and plugins for Blender.");
+create_project("Addons", "None", true, $addon_developers, "Addon scripts and plugins for Blender.");
 create_project("Translations", "None", true, $translation_developers, "Localization of Blender in different languages.");
 
 /* modules */

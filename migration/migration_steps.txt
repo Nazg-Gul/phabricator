@@ -1,0 +1,142 @@
+
+A) CONFIGURE PHABRICATOR
+========================
+
+./bin/config set policy.allow-public true
+./bin/config set feed.public true
+./bin/config set welcome.file rsrc/custom/static/welcome.html
+
+set maniphest.custom-field-definitions
+
+{
+    "blender:task-type": {
+        "name": "Type",
+        "type": "select",
+        "search": true,
+        "options": {
+            "Bug": "Bug",
+            "Patch": "Patch",
+            "Design": "Design",
+            "To Do": "To Do",
+            "Feature Request": "Feature Request",
+            "OpenGL Error": "OpenGL Error"
+        }
+    }
+}
+
+set maniphest.priorities
+
+{
+  "100" : {
+    "name"  : "Unbreak Now!",
+    "short" : "Unbreak!",
+    "color" : "indigo"
+  },
+  "90"  : {
+    "name"  : "Needs Triage",
+    "short" : "Triage",
+    "color" : "violet"
+  },
+  "50"  : {
+    "name"  : "Confirmed",
+    "short" : "Confirmed",
+    "color" : "orange"
+  },
+  "40"  : {
+    "name"  : "Normal",
+    "short" : "Normal",
+    "color" : "yellow"
+  },
+  "30"  : {
+    "name"  : "Incomplete",
+    "short" : "Incomplete",
+    "color" : "red"
+  },
+  "20"  : {
+    "name"  : "Low",
+    "short" : "Low",
+    "color" : "yellow"
+  }
+}
+
+
+Disable irrelevant applications and set policies (TODO figure out policies!)
+
+
+B) FILE STORAGE
+===============
+
+Set some file storage upload limit (I think projects.blender.org is 5MB, but make it bigger for import to be sure, can lower again later):
+
+./bin/config set storage.upload-size-limit 10M
+
+
+Decide to store files in MySQL DB or in files on disk. So either:
+
+./bin/config set storage.local-disk.path /some/path/to/files
+
+Or increase MySQL storage limit to match storage.upload-size-limit
+
+
+C) MYSQL TABLE TWEAKS
+=====================
+
+Avoid F1, F2 shortcut keys being considered as file links:
+
+ALTER TABLE phabricator_file.file AUTO_INCREMENT = 1000;
+
+Avoid conflicts with existing report numbers or users while testing:
+
+ALTER TABLE phabricator_maniphest.maniphest_task AUTO_INCREMENT = 50000;
+ALTER TABLE phabricator_user.user AUTO_INCREMENT = 50000;
+
+
+D) ACCIDENTAL EMAIL SENDING
+===========================
+
+All email addresses have been modified to avoid sending emails while users and tasks are being created.
+Either disable email sending code in phab, or disable postfix, or figure out what happens when you try to send a ton of emails to invalid addresses.
+
+
+E) IMPORT USERS AND PROJECTS
+============================
+
+./export_users.php on projects.blender.org
+copy over dump/ folder
+./import_users.php on developer.blender.org
+
+./import_projects.php
+
+
+F) IMPORT TASKS
+===============
+
+This is going to be slow and lots of data, best to do it in steps, perhaps starting with the newest reports.
+
+./export_task.php 37000 38000
+copy over dump/ folder
+./import_task.php 37000 38000
+
+And so on for all task ranges ..
+
+
+G) TESTS
+========
+
+* Check if number of developers with commit rights match
+* Check if number of open bugs and patches roughly match
+* Check for report status, attached files, missing comments, etc
+* Add email address to you user settings to test (it's set to an invalid one for testing)
+* Test if emails, password reset, etc works
+
+
+H) FOR FINAL
+============
+
+* Search and remove _tmpdisabledemail_ on all email addresses in DB
+* Preserve user and project data from testing period somehow, or dump it all?
+* Replace projects.blender.org link in comments (either in DB or beforehand)
+* Perhaps clear feeds in DB, may take up unnecessary space?
+* Make redirects from projects.blender.org
+
+
