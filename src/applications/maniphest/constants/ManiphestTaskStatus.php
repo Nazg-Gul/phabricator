@@ -28,10 +28,10 @@ final class ManiphestTaskStatus extends ManiphestConstants {
     return array(
       self::STATUS_OPEN                 => $open,
       self::STATUS_CLOSED_RESOLVED      => $resolved,
-      self::STATUS_CLOSED_WONTFIX       => $wontfix,
+      //self::STATUS_CLOSED_WONTFIX       => $wontfix,
       self::STATUS_CLOSED_INVALID       => $invalid,
       self::STATUS_CLOSED_DUPLICATE     => $duplicate,
-      self::STATUS_CLOSED_SPITE         => $spite,
+      //self::STATUS_CLOSED_SPITE         => $spite,
       self::STATUS_CLOSED_ARCHIVED      => $archived,
     );
   }
@@ -48,10 +48,10 @@ final class ManiphestTaskStatus extends ManiphestConstants {
     $map = array(
       self::STATUS_OPEN                 => $open,
       self::STATUS_CLOSED_RESOLVED      => $resolved,
-      self::STATUS_CLOSED_WONTFIX       => $wontfix,
+      //self::STATUS_CLOSED_WONTFIX       => $wontfix,
       self::STATUS_CLOSED_INVALID       => $invalid,
       self::STATUS_CLOSED_DUPLICATE     => $duplicate,
-      self::STATUS_CLOSED_SPITE         => $spite,
+      //self::STATUS_CLOSED_SPITE         => $spite,
       self::STATUS_CLOSED_ARCHIVED      => $archived,
     );
     return idx($map, $status, '???');
@@ -63,10 +63,10 @@ final class ManiphestTaskStatus extends ManiphestConstants {
     $map = array(
       self::STATUS_OPEN             => self::COLOR_STATUS_OPEN,
       self::STATUS_CLOSED_RESOLVED  => self::COLOR_STATUS_CLOSED,
-      self::STATUS_CLOSED_WONTFIX   => self::COLOR_STATUS_CLOSED,
+      //self::STATUS_CLOSED_WONTFIX   => self::COLOR_STATUS_CLOSED,
       self::STATUS_CLOSED_INVALID   => self::COLOR_STATUS_CLOSED,
       self::STATUS_CLOSED_DUPLICATE => self::COLOR_STATUS_CLOSED,
-      self::STATUS_CLOSED_SPITE     => self::COLOR_STATUS_CLOSED,
+      //self::STATUS_CLOSED_SPITE     => self::COLOR_STATUS_CLOSED,
       self::STATUS_CLOSED_ARCHIVED  => self::COLOR_STATUS_CLOSED,
     );
     return idx($map, $status, $default);
@@ -77,10 +77,10 @@ final class ManiphestTaskStatus extends ManiphestConstants {
     $map = array(
       self::STATUS_OPEN             => 'oh-open',
       self::STATUS_CLOSED_RESOLVED  => 'oh-closed-dark',
-      self::STATUS_CLOSED_WONTFIX   => 'oh-closed-dark',
+      //self::STATUS_CLOSED_WONTFIX   => 'oh-closed-dark',
       self::STATUS_CLOSED_INVALID   => 'oh-closed-dark',
       self::STATUS_CLOSED_DUPLICATE => 'oh-closed-dark',
-      self::STATUS_CLOSED_SPITE     => 'oh-closed-dark',
+      //self::STATUS_CLOSED_SPITE     => 'oh-closed-dark',
       self::STATUS_CLOSED_ARCHIVED  => 'oh-closed-dark',
     );
     return idx($map, $status, $default);

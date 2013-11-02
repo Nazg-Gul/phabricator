@@ -313,9 +313,9 @@ final class ManiphestTaskQuery
 
     static $map = array(
       self::STATUS_RESOLVED   => ManiphestTaskStatus::STATUS_CLOSED_RESOLVED,
-      self::STATUS_WONTFIX    => ManiphestTaskStatus::STATUS_CLOSED_WONTFIX,
+      //self::STATUS_WONTFIX    => ManiphestTaskStatus::STATUS_CLOSED_WONTFIX,
       self::STATUS_INVALID    => ManiphestTaskStatus::STATUS_CLOSED_INVALID,
-      self::STATUS_SPITE      => ManiphestTaskStatus::STATUS_CLOSED_SPITE,
+      //self::STATUS_SPITE      => ManiphestTaskStatus::STATUS_CLOSED_SPITE,
       self::STATUS_DUPLICATE  => ManiphestTaskStatus::STATUS_CLOSED_DUPLICATE,
     );
 

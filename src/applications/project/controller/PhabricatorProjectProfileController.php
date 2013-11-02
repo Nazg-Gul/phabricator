@@ -277,14 +277,11 @@ final class PhabricatorProjectProfileController
       ->setObject($project)
       ->setActionList($actions);
 
-    $view->addProperty(
-      pht('Created'),
-      phabricator_datetime($project->getDateCreated(), $viewer));
-
-    $view->addSectionHeader(pht('Description'));
-    $view->addTextContent(
+    $view->addCustomTextContent(
       PhabricatorMarkupEngine::renderOneObject(
-        id(new PhabricatorMarkupOneOff())->setContent($profile->getBlurb()),
+        id(new PhabricatorMarkupOneOff())
+          ->setPreserveLinebreaks(true)
+          ->setContent($profile->getBlurb()),
         'default',
         $viewer));
 

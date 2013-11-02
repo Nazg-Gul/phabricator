@@ -57,6 +57,14 @@ final class PHUIPropertyListView extends AphrontView {
     return $this;
   }
 
+  public function addCustomTextContent($content) {
+    $this->parts[] = array(
+      'type'    => 'custom-text',
+      'content' => $content,
+    );
+    return $this;
+  }
+
   public function addTextContent($content) {
     $this->parts[] = array(
       'type'    => 'text',
@@ -102,6 +110,9 @@ final class PHUIPropertyListView extends AphrontView {
         case 'section':
           $items[] = $this->renderSectionPart($part);
           break;
+        case 'custom-text':
+          $items[] = $this->renderPropertyPart($part, true);
+          break;
         case 'text':
         case 'image':
           $items[] = $this->renderTextPart($part);
@@ -121,8 +132,18 @@ final class PHUIPropertyListView extends AphrontView {
       ));
   }
 
-  private function renderPropertyPart(array $part) {
+  private function renderPropertyPart(array $part, $customtext = false) {
     $items = array();
+    if($customtext) {
+      $items[] = phutil_tag(
+        'div',
+        array(
+          'class' => 'phui-property-list-text-content',
+        ),
+        $part['content']);
+    }
+    else {
+
     foreach ($part['list'] as $spec) {
       $key = $spec['key'];
       $value = $spec['value'];
@@ -144,6 +165,8 @@ final class PHUIPropertyListView extends AphrontView {
           'class' => 'phui-property-list-value',
         ),
         array($value, ' '));
+    }
+
     }
 
     $list = phutil_tag(
