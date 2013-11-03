@@ -84,7 +84,7 @@ function create_task($user, $id, $title, $projects, $description, $assign_user, 
   $changes = array();
   $changes[ManiphestTransaction::TYPE_STATUS] = ManiphestTaskStatus::STATUS_OPEN;
   $changes[PhabricatorTransactions::TYPE_VIEW_POLICY] = 'public';
-  $changes[PhabricatorTransactions::TYPE_EDIT_POLICY] = 'admin'; // TODO which permission?
+  $changes[PhabricatorTransactions::TYPE_EDIT_POLICY] = lookup_project("Moderators")->getPHID();
 
   $template = new ManiphestTransaction();
 
@@ -210,7 +210,7 @@ function set_status($task, $user, $status, $date)
   ->applyTransactions($task, $transactions);
 }
 
-function create_project($name, $username, $active, $membernames, $blurb = '')
+function create_project($name, $username, $active, $membernames, $blurb = '', $admincontrol = false)
 {
   $user = lookup_user($username);
 
@@ -222,10 +222,15 @@ function create_project($name, $username, $active, $membernames, $blurb = '')
 
   $xactions = array();
 
+  if($admincontrol)
+    $editpolicy = "admin";
+  else
+    $editpolicy = lookup_project("Moderators")->getPHID();
+
   /* policy */
   $project->setViewPolicy("public");
-  $project->setEditPolicy("admin");
-  $project->setJoinPolicy("admin");
+  $project->setEditPolicy($editpolicy);
+  $project->setJoinPolicy($editpolicy);
 
   /* archived */
   if(!$active)

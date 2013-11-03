@@ -27,7 +27,7 @@ require_once 'storage.php';
 $res = db_query_params ('SELECT user_id,user_pw,user_name,realname,email,add_date,timezone FROM users WHERE status=$1 ORDER BY user_id', array('A'));
 
 $user_ids = &util_result_column_to_array ($res, "user_id");
-$user_pws = &util_result_column_to_array ($res, "user_pws");
+$user_pws = &util_result_column_to_array ($res, "user_pw");
 $user_names = &util_result_column_to_array ($res, "user_name");
 $user_realnames = &util_result_column_to_array ($res, "realname");
 $user_emails = &util_result_column_to_array ($res, "email");

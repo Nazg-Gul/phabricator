@@ -60,7 +60,7 @@ set maniphest.priorities
 }
 
 
-Disable irrelevant applications and set policies (TODO figure out policies!)
+Disable irrelevant applications
 
 
 B) FILE STORAGE
@@ -109,6 +109,8 @@ copy over dump/ folder
 ./import_users.php on developer.blender.org
 
 ./import_projects.php
+
+Set maniphest policies for Moderators (avoids it showing up in transactions)
 
 
 F) IMPORT TASKS

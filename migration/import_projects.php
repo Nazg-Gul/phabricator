@@ -7,10 +7,14 @@ require_once 'storage.php';
 require_once 'adapt.php';
 require_once 'phab.php';
 
+/* user groups */
+$all_developers = array_merge(array_merge($bf_developers, $addon_developers), $translation_developers);
+create_project("Moderators", "None", true, $all_developers, "Users with more edit capabilities.", true);
+
 /* projects */
-create_project("BF Blender", "None", true, $bf_developers, "Blender Foundation official release.");
-create_project("Addons", "None", true, $addon_developers, "Addon scripts and plugins for Blender.");
-create_project("Translations", "None", true, $translation_developers, "Localization of Blender in different languages.");
+create_project("BF Blender", "None", true, $bf_developers, "Blender Foundation official release.", true);
+create_project("Addons", "None", true, $addon_developers, "Addon scripts and plugins for Blender.", true);
+create_project("Translations", "None", true, $translation_developers, "Localization of Blender in various languages.", true);
 
 /* modules */
 //create_project("None", "None", true, array(), ""); // None
