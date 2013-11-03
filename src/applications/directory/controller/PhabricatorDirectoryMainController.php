@@ -60,6 +60,7 @@ final class PhabricatorDirectoryMainController
 
     $jump_panel = $this->buildJumpPanel();
     $revision_panel = $this->buildRevisionPanel();
+    $feed_panel = $this->buildFeedPanel();
 
     $content = array(
       $jump_panel,
@@ -71,6 +72,7 @@ final class PhabricatorDirectoryMainController
       $audit_panel,
       $commit_panel,
       $this->minipanels,
+      $feed_panel,
     );
 
     $nav->appendChild($content);
@@ -115,6 +117,10 @@ final class PhabricatorDirectoryMainController
     }
 
     $user = $this->getRequest()->getUser();
+    if (!$user->isLoggedIn()) {
+      return null;
+    }
+
 
     $task_query = id(new ManiphestTaskQuery())
       ->setViewer($user)
@@ -205,6 +211,10 @@ final class PhabricatorDirectoryMainController
 
   private function buildRevisionPanel() {
     $user = $this->getRequest()->getUser();
+    if (!$user->isLoggedIn()) {
+      return null;
+    }
+
     $user_phid = $user->getPHID();
 
     $revision_query = id(new DifferentialRevisionQuery())
@@ -283,6 +293,10 @@ final class PhabricatorDirectoryMainController
 
   private function buildTasksPanel() {
     $user = $this->getRequest()->getUser();
+    if (!$user->isLoggedIn()) {
+      return null;
+    }
+
     $user_phid = $user->getPHID();
 
     $task_query = id(new ManiphestTaskQuery())
@@ -420,6 +434,9 @@ final class PhabricatorDirectoryMainController
   public function buildAuditPanel() {
     $request = $this->getRequest();
     $user = $request->getUser();
+    if (!$user->isLoggedIn()) {
+      return null;
+    }
 
     $phids = PhabricatorAuditCommentEditor::loadAuditPHIDsForUser($user);
 
@@ -468,6 +485,9 @@ final class PhabricatorDirectoryMainController
   public function buildCommitPanel() {
     $request = $this->getRequest();
     $user = $request->getUser();
+    if (!$user->isLoggedIn()) {
+      return null;
+    }
 
     $phids = array($user->getPHID());
 
@@ -506,6 +526,30 @@ final class PhabricatorDirectoryMainController
         ),
         "View Problem Commits \xC2\xBB"));
     $panel->setNoBackground();
+
+    return $panel;
+  }
+
+  public function buildFeedPanel() {
+    $request = $this->getRequest();
+    $user = $request->getUser();
+
+    $viewer = PhabricatorUser::getOmnipotentUser();
+
+    $query = new PhabricatorFeedQuery();
+    $query->setViewer($viewer);
+    $query->setLimit(25);
+    $stories = $query->execute();
+
+    $builder = new PhabricatorFeedBuilder($stories);
+    $builder
+      ->setFramed(true)
+      ->setUser($viewer);
+
+    $panel = new AphrontPanelView();
+    $panel->setHeader('Activity Feed');
+    $panel->setNoBackground();
+    $panel->appendChild($builder->buildView());
 
     return $panel;
   }

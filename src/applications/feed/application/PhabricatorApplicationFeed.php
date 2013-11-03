@@ -29,7 +29,7 @@ final class PhabricatorApplicationFeed extends PhabricatorApplication {
   }
 
   public function getApplicationGroup() {
-    return self::GROUP_COMMUNICATION;
+    return self::GROUP_CORE;
   }
 
 }

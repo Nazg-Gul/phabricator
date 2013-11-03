@@ -23,7 +23,7 @@ final class PhabricatorApplicationProject extends PhabricatorApplication {
   }
 
   public function getApplicationGroup() {
-    return self::GROUP_ORGANIZATION;
+    return self::GROUP_CORE;
   }
 
   public function getRemarkupRules() {

@@ -42,6 +42,15 @@ final class PhabricatorApplicationAuth extends PhabricatorApplication {
         ->setSelected(($controller instanceof PhabricatorLogoutController));
       $items[] = $item;
     }
+    else {
+      $item = id(new PHUIListItemView())
+        ->addClass('core-menu-item')
+        ->setName(pht('Log In or Register'))
+        ->setRenderNameAsTooltip(false)
+        ->setIcon('authentication')
+        ->setHref('/login/');
+      $items[] = $item;
+    }
 
     return $items;
   }

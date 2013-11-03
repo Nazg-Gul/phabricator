@@ -2,6 +2,14 @@
 
 abstract class PhabricatorDirectoryController extends PhabricatorController {
 
+  public function shouldRequireLogin() {
+    if (PhabricatorEnv::getEnvConfig('policy.allow-public')) {
+      return false;
+    }
+
+    return parent::shouldRequireLogin();
+  }
+
   public function buildStandardPageResponse($view, array $data) {
     $page = $this->buildStandardPageView();
 
@@ -40,7 +48,12 @@ abstract class PhabricatorDirectoryController extends PhabricatorController {
 
     $status = array();
     foreach ($applications as $key => $application) {
-      $status[get_class($application)] = $application->loadStatus($user);
+      if ($user->isLoggedIn()) {
+        $status[get_class($application)] = $application->loadStatus($user);
+      }
+      else {
+        $status[get_class($application)] = array();
+      }
     }
 
     $tile_groups = array();
