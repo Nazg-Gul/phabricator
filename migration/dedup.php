@@ -593,4 +593,7 @@ $migrate_dedup_users["yesmydear"] = "None";
 $migrate_dedup_users["spacetug"] = "None";
 $migrate_dedup_users["omegafold"] = "None";
 
+// testing
+$migrate_dedup_users["blendix_rename_test_a"] = "blendix";
+$migrate_dedup_users["blendix_rename_test_b"] = "blendix";
 

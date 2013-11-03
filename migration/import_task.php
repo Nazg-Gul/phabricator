@@ -23,7 +23,7 @@ for($id = intval($argv[1]); $id < intval($argv[2]); $id+=1) {
   $assign = lookup_user(dedup_user($mtask->assign));
   $projects = array();
   $status = ManiphestTaskStatus::STATUS_OPEN;
-  $description = '%%%' . html_entity_decode($mtask->description) . '%%%';
+  $description = '%%%' . str_replace("\r\n", "\n", html_entity_decode($mtask->description)) . '%%%';
   $title = html_entity_decode($mtask->title);
 
   /* spam detection */
@@ -161,7 +161,6 @@ for($id = intval($argv[1]); $id < intval($argv[2]); $id+=1) {
       $status = ManiphestTaskStatus::STATUS_CLOSED_ARCHIVED;
     }
     else if($mtask->tracker == "Game Engine") {
-      $projects[] = lookup_project("BF Blender")->getPHID();
       $projects[] = lookup_project("Game Engine")->getPHID();
       $task_type = "Bug";
       $priority = 40;
@@ -496,6 +495,4 @@ for($id = intval($argv[1]); $id < intval($argv[2]); $id+=1) {
   if($task->getStatus() == ManiphestTaskStatus::STATUS_OPEN && $mtask->state == "Closed")
     echo "ERROR: status out of sync, task should have been closed (" . $id . ")\n";
 }
-
-// TODO: test importing the whole range of tasks locally
 

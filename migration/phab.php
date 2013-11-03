@@ -67,7 +67,6 @@ function create_task($user, $id, $title, $projects, $description, $assign_user, 
   $task->setTitle($title);
   $task->setProjectPHIDs($projects);
   $task->setCCPHIDs($ccs);
-  // TODO when editing a task, it shows the description as edited even though it didn't really happen, why?
   $task->setDescription($description);
   $task->setPriority($priority);
   $task->setOverrideDate($date);
