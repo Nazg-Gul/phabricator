@@ -109,6 +109,13 @@ abstract class ManiphestController extends PhabricatorController {
       if ($project) {
         $nav->addLabel(pht($project->getName()));
         $menu = $nav->getMenu();
+
+        $url = $nav->getBaseURI() . 'project/' . $this->projectKey;
+        $link = $menu->newLink(pht('All Types'), $url, '');
+        if (!$this->taskTypeKey) {
+          $link->addClass('phui-list-item-selected');
+        }
+
         $task_types = $this->getBlenderTaskTypes();
         foreach ($task_types as $id => $name) {
           $url = $nav->getBaseURI() . 'project/' . $this->projectKey . '/type/' . $id;
