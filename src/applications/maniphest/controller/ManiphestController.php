@@ -101,18 +101,21 @@ abstract class ManiphestController extends PhabricatorController {
           'showIDs' => array($show_item_id),
           'hideIDs' => $project_ids,
         ));
-    } else if (!$this->taskTypeKey) {
+    } else {
       $project = id(new PhabricatorProjectQuery())
         ->setViewer($user)
         ->withIDs(array($this->projectKey))
         ->executeOne();
       if ($project) {
         $nav->addLabel(pht($project->getName()));
+        $menu = $nav->getMenu();
         $task_types = $this->getBlenderTaskTypes();
         foreach ($task_types as $id => $name) {
-          $nav->addFilter(
-            'project/' . $this->projectKey . '/type/' . $id,
-            pht($name));
+          $url = $nav->getBaseURI() . 'project/' . $this->projectKey . '/type/' . $id;
+          $link = $menu->newLink(pht($name), $url, $id);
+          if ($id == $this->taskTypeKey) {
+            $link->addClass('phui-list-item-selected');
+          }
         }
       }
     }
