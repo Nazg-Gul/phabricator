@@ -67,16 +67,9 @@ Disable irrelevant applications
 B) FILE STORAGE
 ===============
 
-Set some file storage upload limit (I think projects.blender.org is 5MB, but make it bigger for import to be sure, can lower again later):
+./bin/config set storage.local-disk.path /data/www/vhosts/developer.blender.org/htdocs/uploads
 
-./bin/config set storage.upload-size-limit 10M
-
-
-Decide to store files in MySQL DB or in files on disk. So either:
-
-./bin/config set storage.local-disk.path /some/path/to/files
-
-Or increase MySQL storage limit to match storage.upload-size-limit
+This is apparently not enough, still have 3GB of data in file_storageblob table?
 
 
 C) MYSQL TABLE TWEAKS
@@ -111,7 +104,12 @@ copy over dump/ folder
 
 ./import_projects.php
 
-Set maniphest policies for Moderators (avoids it showing up in transactions)
+
+Set maniphest policies:
+
+* Public view default
+* Default edit policies: Moderators
+* Everyting else: all users (for import)
 
 
 F) IMPORT TASKS
@@ -121,7 +119,7 @@ This is going to be slow and lots of data, best to do it in steps, perhaps start
 
 ./export_task.php 37000 38000
 copy over dump/ folder
-./import_task.php 37000 38000
+sudo -u www ./import_task.php 37000 38000
 
 And so on for all task ranges ..
 
@@ -145,5 +143,7 @@ H) FOR FINAL
 * Replace projects.blender.org link in comments (either in DB or beforehand)
 * Perhaps clear feeds in DB, may take up unnecessary space?
 * Make redirects from projects.blender.org
+* Set some file storage upload limit (e.g. ./bin/config set storage.upload-size-limit 10M)
+* Modify permissions
 
 

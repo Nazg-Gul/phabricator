@@ -395,5 +395,6 @@ $admins = array(
 	"ton",
 	"jesterking",
 	"nazgul",
-	"campbellbarton");
+	"campbellbarton",
+	"dmcgrath");
 

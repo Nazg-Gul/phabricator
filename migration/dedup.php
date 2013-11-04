@@ -588,6 +588,7 @@ $migrate_dedup_users["kitsueb"] = "kitsu_eb";
 $migrate_dedup_users["slugzzz"] = "tsquar3d";
 $migrate_dedup_users["moore500"] = "mmoore500";
 $migrate_dedup_users["verumbra"] = "sebastian0";
+$migrate_dedup_users["blenderbug"] = "nikola";
 
 // disabled users who have tasks
 $migrate_dedup_users["sjoerd"] = "sjoerddevries";
