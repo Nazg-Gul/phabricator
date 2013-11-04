@@ -5,6 +5,7 @@ A) CONFIGURE PHABRICATOR
 ./bin/config set policy.allow-public true
 ./bin/config set feed.public true
 ./bin/config set welcome.file rsrc/custom/static/welcome.html
+./bin/config set welcome.file rsrc/custom/static/report_guidelines.html
 
 set maniphest.custom-field-definitions
 

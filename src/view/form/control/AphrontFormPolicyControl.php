@@ -118,12 +118,14 @@ final class AphrontFormPolicyControl extends AphrontFormControl {
       throw new Exception(pht("Call setCapability() before rendering!"));
     }
 
-    $policy = $this->object->getPolicy($this->capability);
-    if (!$policy) {
-      // TODO: Make this configurable.
-      $policy = PhabricatorPolicies::POLICY_USER;
+    if (!$this->getValue()) {
+      $policy = $this->object->getPolicy($this->capability);
+      if (!$policy) {
+        // TODO: Make this configurable.
+        $policy = PhabricatorPolicies::POLICY_USER;
+      }
+      $this->setValue($policy);
     }
-    $this->setValue($policy);
 
 
     $control_id = celerity_generate_unique_node_id();

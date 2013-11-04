@@ -187,6 +187,10 @@ final class PhabricatorCoreConfigOptions
         ->setLocked(true)
         ->setDescription(
           pht('Custom HTML file to show on the main Phabricator dashboard.')),
+      $this->newOption('report_guidelines.file', 'string', null)
+        ->setLocked(true)
+        ->setDescription(
+          pht('Custom HTML file to show when reporting new bug.')),
       $this->newOption('phabricator.cache-namespace', 'string', null)
         ->setLocked(true)
         ->setDescription(pht('Cache namespace.')),

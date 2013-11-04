@@ -50,6 +50,7 @@ final class ManiphestTaskEditController extends ManiphestController {
         $task->setTitle($request->getStr('title'));
 
         if ($can_edit_projects) {
+          $default_projects = array();
           $projects = $request->getStr('projects');
           if ($projects) {
             $tokens = explode(';', $projects);
@@ -73,16 +74,26 @@ final class ManiphestTaskEditController extends ManiphestController {
               mpull($name_map, null, 'getName') +
               mpull($phid_map, null, 'getPHID');
 
-            $default_projects = array();
             foreach ($tokens as $token) {
               if (isset($all_map[$token])) {
                 $default_projects[] = $all_map[$token]->getPHID();
               }
             }
 
-            if ($default_projects) {
-              $task->setProjectPHIDs($default_projects);
-            }
+          }
+
+          $project_key = $request->getStr('project');
+          $user = $this->getRequest()->getUser();
+          $project = id(new PhabricatorProjectQuery())
+            ->setViewer($user)
+            ->withIDs(array($project_key))
+            ->executeOne();
+          if ($project) {
+            $default_projects[] = $project->getPHID();
+          }
+
+          if ($default_projects) {
+            $task->setProjectPHIDs($default_projects);
           }
         }
 
@@ -520,6 +531,13 @@ final class ManiphestTaskEditController extends ManiphestController {
           ->setLimit(1));
     }
 
+    /* Hide policies if we're creating task for specified project. */
+    $creating_for_project = $request->getStr('project') != '';
+
+    /* NOTE: We only hide field, but it'll be prefilled,
+     *       this is so admins might add themelves to CC
+     *       and keep original reported up-to-date.
+     */
     $form
       ->appendChild(
         id(new AphrontFormTokenizerControl())
@@ -527,7 +545,8 @@ final class ManiphestTaskEditController extends ManiphestController {
           ->setName('cc')
           ->setValue($cc_value)
           ->setUser($user)
-          ->setDatasource('/typeahead/common/mailable/'));
+          ->setDatasource('/typeahead/common/mailable/')
+          ->setHidden($creating_for_project));
 
     if ($can_edit_priority) {
       $form
@@ -536,7 +555,8 @@ final class ManiphestTaskEditController extends ManiphestController {
             ->setLabel(pht('Priority'))
             ->setName('priority')
             ->setOptions($priority_map)
-            ->setValue($task->getPriority()));
+            ->setValue($task->getPriority())
+            ->setHidden($creating_for_project));
     }
 
     if ($can_edit_policies) {
@@ -547,14 +567,18 @@ final class ManiphestTaskEditController extends ManiphestController {
             ->setCapability(PhabricatorPolicyCapability::CAN_VIEW)
             ->setPolicyObject($task)
             ->setPolicies($policies)
-            ->setName('viewPolicy'))
+            ->setName('viewPolicy')
+            ->setValue('users')
+            ->setHidden($creating_for_project))
         ->appendChild(
           id(new AphrontFormPolicyControl())
             ->setUser($user)
             ->setCapability(PhabricatorPolicyCapability::CAN_EDIT)
             ->setPolicyObject($task)
             ->setPolicies($policies)
-            ->setName('editPolicy'));
+            ->setName('editPolicy')
+            ->setValue('admin')
+            ->setHidden($creating_for_project));
     }
 
     if ($can_edit_projects) {
@@ -579,6 +603,19 @@ final class ManiphestTaskEditController extends ManiphestController {
 
     foreach ($aux_fields as $aux_field) {
       $aux_control = $aux_field->renderEditControl();
+      $name = $aux_control->getName();
+      if ($name == 'std:maniphest:blender:task-type') {
+        $type = $request->getStr('type');
+        if (array_key_exists($type, $aux_control->getOptions())) {
+          $aux_control->setValue($type);
+          $aux_control->setHidden(true);
+        }
+      }
+      else if ($name == 'std:maniphest:blender:extension-type') {
+        if (!$task->getPHID()) {
+          $aux_control->setHidden(true);
+        }
+      }
       $form->appendChild($aux_control);
     }
 
@@ -652,6 +689,19 @@ final class ManiphestTaskEditController extends ManiphestController {
       ->setFormError($error_view)
       ->setForm($form);
 
+    $panel = null;
+    if (!$task->getPHID() && $request->getStr('type') == 'Bug') {
+      if (PhabricatorEnv::getEnvConfig('report_guidelines.file') !== null) {
+        $webroot = dirname(phutil_get_library_root('phabricator')).'/webroot/';
+        $panel = new AphrontPanelView();
+        $panel->appendChild(
+          phutil_safe_html(
+            FileSystem::readFile($webroot .
+              PhabricatorEnv::getEnvConfig('report_guidelines.file'))));
+        $panel->setNoBackground();
+      }
+    }
+
     $preview = id(new PHUIRemarkupPreviewPanel())
       ->setHeader(pht('Description Preview'))
       ->setControlID('description-textarea')
@@ -671,6 +721,7 @@ final class ManiphestTaskEditController extends ManiphestController {
     return $this->buildApplicationPage(
       array(
         $crumbs,
+        $panel,
         $form_box,
         $preview,
       ),

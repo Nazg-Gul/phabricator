@@ -694,6 +694,9 @@ return array(
   // The custom HTML file for the Phabricator welcome screen.
   'welcome.file' => null,
 
+  // Custom HTML file to show when reporting new bug.
+  'report_guidelines.file' => null,
+
 // -- Files ----------------------------------------------------------------- //
 
   // Lists which uploaded file types may be viewed in the browser. If a file

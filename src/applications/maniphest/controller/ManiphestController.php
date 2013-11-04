@@ -125,6 +125,18 @@ abstract class ManiphestController extends PhabricatorController {
           }
         }
       }
+
+      $nav->addLabel(pht('Tasks'));
+      $url = '/maniphest/task/create/?project='.$project->getID();
+      $caption = 'Create';
+      if ($this->taskTypeKey) {
+        $type = idx($task_types, $this->taskTypeKey);
+        if ($type) {
+          $caption .= ' '.$type;
+          $url .= '&type='.$this->taskTypeKey;
+        }
+      }
+      $menu->newLink(pht($caption), $url, 'report_task');
     }
   }
 
