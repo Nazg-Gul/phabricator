@@ -533,6 +533,9 @@ final class PhabricatorDirectoryMainController
   public function buildFeedPanel() {
     $request = $this->getRequest();
     $user = $request->getUser();
+    if ($user->isLoggedIn()) {
+      return null;
+    }
 
     $viewer = PhabricatorUser::getOmnipotentUser();
 

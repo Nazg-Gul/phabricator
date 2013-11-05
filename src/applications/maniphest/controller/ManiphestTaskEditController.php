@@ -459,6 +459,8 @@ final class ManiphestTaskEditController extends ManiphestController {
       $cancel_uri = '/maniphest/';
     }
 
+    $instructions = null;
+
     if ($task->getID()) {
       $button_name = pht('Save Task');
       $header_name = pht('Edit Task');
@@ -466,6 +468,19 @@ final class ManiphestTaskEditController extends ManiphestController {
       $cancel_uri = '/T'.$parent_task->getID();
       $button_name = pht('Create Task');
       $header_name = pht('Create New Subtask');
+    } else if ($request->getStr('type') == 'Bug') {
+      $button_name = pht('Report Bug');
+      $header_name = pht('Report a Bug');
+
+      $task->setDescription("**System Information**\nOperating system and graphics card\n\n**Blender Version**\nBroken: Blender 2.XX rXXXXXX\nWorked: Blender 2.XX rXXXXXX\n\n**Short description of error**\n\n**Exact steps for others to reproduce the error**\nBased on a (as simple as possible) attached .blend file with minimum amount of steps\n");
+
+      if (PhabricatorEnv::getEnvConfig('report_guidelines.file') !== null) {
+        $webroot = dirname(phutil_get_library_root('phabricator')).'/webroot/';
+        $instructions = phutil_safe_html(
+          FileSystem::readFile($webroot .
+            PhabricatorEnv::getEnvConfig('report_guidelines.file')));
+      }
+
     } else {
       $button_name = pht('Create Task');
       $header_name = pht('Create New Task');
@@ -482,6 +497,10 @@ final class ManiphestTaskEditController extends ManiphestController {
       $form
         ->setUser($user)
         ->addHiddenInput('template', $template_id);
+    }
+
+    if ($instructions) {
+      $form->appendInstructions($instructions);
     }
 
     if ($parent_task) {
@@ -589,15 +608,7 @@ final class ManiphestTaskEditController extends ManiphestController {
             ->setName('projects')
             ->setValue($projects_value)
             ->setID($project_tokenizer_id)
-            ->setCaption(
-              javelin_tag(
-                'a',
-                array(
-                  'href'        => '/project/create/',
-                  'mustcapture' => true,
-                  'sigil'       => 'project-create',
-                ),
-                pht('Create New Project')))
+            ->setCaption(pht('Add relevant projects tags here'))
             ->setDatasource('/typeahead/common/projects/'));
     }
 
@@ -657,6 +668,7 @@ final class ManiphestTaskEditController extends ManiphestController {
       ->setName('description')
       ->setID('description-textarea')
       ->setValue($task->getDescription())
+      ->setCaption(pht('Please fill in all requested information. Use drag and drop to attach files.'))
       ->setUser($user);
 
     $form
@@ -689,19 +701,6 @@ final class ManiphestTaskEditController extends ManiphestController {
       ->setFormError($error_view)
       ->setForm($form);
 
-    $panel = null;
-    if (!$task->getPHID() && $request->getStr('type') == 'Bug') {
-      if (PhabricatorEnv::getEnvConfig('report_guidelines.file') !== null) {
-        $webroot = dirname(phutil_get_library_root('phabricator')).'/webroot/';
-        $panel = new AphrontPanelView();
-        $panel->appendChild(
-          phutil_safe_html(
-            FileSystem::readFile($webroot .
-              PhabricatorEnv::getEnvConfig('report_guidelines.file'))));
-        $panel->setNoBackground();
-      }
-    }
-
     $preview = id(new PHUIRemarkupPreviewPanel())
       ->setHeader(pht('Description Preview'))
       ->setControlID('description-textarea')
@@ -721,7 +720,6 @@ final class ManiphestTaskEditController extends ManiphestController {
     return $this->buildApplicationPage(
       array(
         $crumbs,
-        $panel,
         $form_box,
         $preview,
       ),
