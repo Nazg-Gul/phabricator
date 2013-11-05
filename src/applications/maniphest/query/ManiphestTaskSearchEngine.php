@@ -395,13 +395,13 @@ final class ManiphestTaskSearchEngine
   public function getBuiltinQueryNames() {
     $names = array();
 
+    $names['open'] = pht('Open Tasks');
+    $names['all'] = pht('All Tasks');
+
     if ($this->requireViewer()->isLoggedIn()) {
       $names['assigned'] = pht('Assigned');
       $names['authored'] = pht('Authored');
     }
-
-    $names['open'] = pht('Open Tasks');
-    $names['all'] = pht('All Tasks');
 
     return $names;
   }
