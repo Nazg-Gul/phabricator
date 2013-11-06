@@ -82,8 +82,8 @@ function handleSingleRepository(
         handleSingleUserPHID($keydir, $viewer, $memberPHID, $used_keys));
     }
   } else if ($type == PhabricatorPeoplePHIDTypeUser::TYPECONST) {
-      $members = handleSingleUserPHID(
-        $keydir, $viewer, $pushable->getPHID(), $used_keys);
+    $members = handleSingleUserPHID(
+      $keydir, $viewer, $pushable->getPHID(), $used_keys);
   } else if ($type == PhabricatorPolicyPHIDTypePolicy::TYPECONST) {
     /* pass */
   } else {
