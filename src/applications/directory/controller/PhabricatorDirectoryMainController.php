@@ -81,7 +81,7 @@ final class PhabricatorDirectoryMainController
     return $this->buildApplicationPage(
       $nav,
       array(
-        'title' => 'Phabricator',
+        'title' => 'Blender Foundation: Welcome	',
         'device' => true,
       ));
   }

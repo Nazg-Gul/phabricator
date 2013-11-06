@@ -397,7 +397,7 @@ final class PhabricatorMetaMTAMail extends PhabricatorMetaMTADAO {
               $mailer->setFrom($actor_email);
             } else {
               $from_email = coalesce($actor_email, $default_from);
-              $from_name = coalesce($actor_name, pht('Phabricator'));
+              $from_name = coalesce($actor_name, pht('Blender Foundation'));
 
               if (empty($params['reply-to'])) {
                 $params['reply-to'] = $from_email;
