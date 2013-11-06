@@ -118,13 +118,10 @@ final class AphrontFormPolicyControl extends AphrontFormControl {
       throw new Exception(pht("Call setCapability() before rendering!"));
     }
 
-    if (!$this->getValue()) {
-      $policy = $this->object->getPolicy($this->capability);
-      if (!$policy) {
-        // TODO: Make this configurable.
-        $policy = PhabricatorPolicies::POLICY_USER;
-      }
-      $this->setValue($policy);
+    $policy = $this->object->getPolicy($this->capability);
+    if (!$policy) {
+      // TODO: Make this configurable.
+      $policy = PhabricatorPolicies::POLICY_USER;
     }
 
 
