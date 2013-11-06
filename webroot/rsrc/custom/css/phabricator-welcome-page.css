@@ -1,0 +1,61 @@
+/**
+ * @provides phabricator-welcome-page
+ */
+
+
+.project-list {
+  padding: 0;
+  background: #FFF;
+  
+  border: none;
+  background: none;
+  margin-bottom: 20px;
+}
+
+.project-list .aphront-panel-header {
+  display: none;
+}
+
+.project-item {
+  float: left;
+  text-align: center;
+  background: #FFF;
+  height: 130px;
+  border: 1px solid #C7CCD9;
+  border-bottom: 1px solid #A1A6B0;
+}
+
+.project-item h2 {
+  width: 100%;
+  padding: 3px 0px;
+  color: #333;
+  font-size: 13pt;
+  font-weight: normal;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #CCC;
+}
+
+.project-item li {
+  margin-bottom: 5px;
+}
+
+.project-item.span4 {
+  width: 24%;
+  margin-right: 1%;
+}
+
+.project-item.span8 {
+  float: left;
+  width: 49%;
+}
+
+@media all and (max-width: 800px) {
+  .project-item.span8 {
+    width: 48%;
+  }
+}
+
+.project-item.span8 ul {
+  float: left;
+  width: 50%;
+}

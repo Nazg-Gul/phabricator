@@ -81,6 +81,8 @@ $package_spec = array(
 
     'phabricator-jump-nav',
 
+    'phabricator-welcome-page',
+
     'phabricator-remarkup-css',
     'syntax-highlighting-css',
     'aphront-pager-view-css',

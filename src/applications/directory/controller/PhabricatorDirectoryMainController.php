@@ -282,12 +282,14 @@ final class PhabricatorDirectoryMainController
 
   private function buildWelcomePanelFromFile() {
     $webroot = dirname(phutil_get_library_root('phabricator')).'/webroot/';
-    $panel = new AphrontMiniPanelView();
+    $panel = new AphrontPanelView();
+    $panel->addClass('project-list');
     $panel->appendChild(
       phutil_safe_html(
         FileSystem::readFile($webroot .
           PhabricatorEnv::getEnvConfig('welcome.file'))));
 
+    require_celerity_resource('phabricator-welcome-page');
     return $panel;
   }
 
