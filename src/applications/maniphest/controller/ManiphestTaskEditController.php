@@ -587,7 +587,6 @@ final class ManiphestTaskEditController extends ManiphestController {
             ->setPolicyObject($task)
             ->setPolicies($policies)
             ->setName('viewPolicy')
-            ->setValue('users')
             ->setHidden($creating_for_project))
         ->appendChild(
           id(new AphrontFormPolicyControl())
@@ -596,7 +595,6 @@ final class ManiphestTaskEditController extends ManiphestController {
             ->setPolicyObject($task)
             ->setPolicies($policies)
             ->setName('editPolicy')
-            ->setValue('admin')
             ->setHidden($creating_for_project));
     }
 
