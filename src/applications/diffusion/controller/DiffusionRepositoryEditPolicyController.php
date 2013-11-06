@@ -49,11 +49,9 @@ final class DiffusionRepositoryEditPolicyController
         ->setTransactionType($type_edit)
         ->setNewValue($v_edit);
 
-      if ($repository->isHosted()) {
-        $xactions[] = id(clone $template)
-          ->setTransactionType($type_push)
-          ->setNewValue($v_push);
-      }
+      $xactions[] = id(clone $template)
+        ->setTransactionType($type_push)
+        ->setNewValue($v_push);
 
       id(new PhabricatorRepositoryEditor())
         ->setContinueOnNoEffect(true)
@@ -95,21 +93,13 @@ final class DiffusionRepositoryEditPolicyController
           ->setPolicies($policies)
           ->setName('editPolicy'));
 
-    if ($repository->isHosted()) {
-      $form->appendChild(
-        id(new AphrontFormPolicyControl())
-          ->setUser($viewer)
-          ->setCapability(DiffusionCapabilityPush::CAPABILITY)
-          ->setPolicyObject($repository)
-          ->setPolicies($policies)
-          ->setName('pushPolicy'));
-    } else {
-      $form->appendChild(
-        id(new AphrontFormMarkupControl())
-          ->setLabel(pht('Can Push'))
-          ->setValue(
-            phutil_tag('em', array(), pht('Not a Hosted Repository'))));
-    }
+    $form->appendChild(
+      id(new AphrontFormPolicyControl())
+        ->setUser($viewer)
+        ->setCapability(DiffusionCapabilityPush::CAPABILITY)
+        ->setPolicyObject($repository)
+        ->setPolicies($policies)
+        ->setName('pushPolicy'));
 
     $form
       ->appendChild(
