@@ -4,6 +4,7 @@ abstract class ManiphestController extends PhabricatorController {
 
   protected $projectKey;
   protected $taskTypeKey;
+  protected $alwaysVisibleProjects = array('BF Blender', 'Addons', 'Game Engine');
 
   public function willProcessRequest(array $data) {
     $this->projectKey = idx($data, 'projectKey');
@@ -70,10 +71,7 @@ abstract class ManiphestController extends PhabricatorController {
       foreach ($projects as $project) {
         $url = 'project/' . $project->getID();
         $name = $project->getName();
-        $is_hide = !in_array(
-          $name, array(
-            'BF Blender',
-            'Game Engine'));
+        $is_hide = !in_array($name, $this->alwaysVisibleProjects);
         if ($is_hide) {
           $label_id = celerity_generate_unique_node_id();
           $project_ids[] = $label_id;
@@ -125,18 +123,6 @@ abstract class ManiphestController extends PhabricatorController {
           }
         }
       }
-
-      $nav->addLabel(pht('Tasks'));
-      $url = '/maniphest/task/create/?project='.$project->getID();
-      $caption = 'Create';
-      if ($this->taskTypeKey) {
-        $type = idx($task_types, $this->taskTypeKey);
-        if ($type) {
-          $caption .= ' '.$type;
-          $url .= '&type='.$this->taskTypeKey;
-        }
-      }
-      $menu->newLink(pht($caption), $url, 'report_task');
     }
   }
 
@@ -184,6 +170,13 @@ abstract class ManiphestController extends PhabricatorController {
         if ($this->taskTypeKey)
           $crumb->setHref('/maniphest/project/'.$this->projectKey);
         $crumbs->addCrumb($crumb);
+
+        $crumbs->addAction(
+          id(new PHUIListItemView())
+            ->setName(pht('Report Bug'))
+            ->setHref($this->getApplicationURI('task/create/?project='.
+                                               $project->getID().'&type=Bug'))
+            ->setIcon('create'));
       } else {
         throw new Exception('Unknown project was passed via the url');
       }
@@ -200,12 +193,6 @@ abstract class ManiphestController extends PhabricatorController {
         throw new Exception('Unknown task type was passed via the url');
       }
     }
-
-    $crumbs->addAction(
-      id(new PHUIListItemView())
-        ->setName(pht('Create Task'))
-        ->setHref($this->getApplicationURI('task/create/'))
-        ->setIcon('create'));
 
     return $crumbs;
   }
